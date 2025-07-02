@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList } from 'react-native';
 import { Search } from 'lucide-react-native';
-import BoardCard from '../../components/BoardCard';
-import EmptyState from '../../components/EmptyState';
+import BoardCard from '../../components/boardcard';
+import EmptyState from '../../components/emptystate';
 import COLORS from '../../constants/colors';
-import { useBoardStore } from '../../store/boardStore';
+import { useBoardStore } from '../../store/boardstore';
 
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState('');

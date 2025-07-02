@@ -1,5 +1,5 @@
 // Brand colors
-export const COLORS = {
+const COLORS = {
   orange: '#F4A300', // Buttons, highlights
   purple: '#A152DB', // Interactive elements
   red: '#ED3E6A', // Alerts, icons

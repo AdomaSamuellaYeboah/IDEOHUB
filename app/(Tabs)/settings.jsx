@@ -11,7 +11,7 @@ import {
   HelpCircle, 
   Info 
 } from 'lucide-react-native';
-import { useUserStore } from '../../store/userStore';
+import { useUserStore } from '../../store/userstore';
 import COLORS from '../../constants/colors';
 
 export default function SettingsScreen() {

@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useUserStore } from '../store/userStore';
-import COLORS from '../constants/colors';
+import { useUserStore } from '../../store/userstore';
+import COLORS from '../../constants/colors';
 
 export default function SignupScreen() {
   const [name, setName] = useState('');

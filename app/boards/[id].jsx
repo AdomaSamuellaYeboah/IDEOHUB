@@ -19,11 +19,11 @@ import {
   Users, 
   MoreVertical 
 } from 'lucide-react-native';
-import { useBoardStore } from '../../store/boardStore';
-import PostCard from '../../components/PostCard';
-import CreatePostFAB from '../../components/CreatePostFAB';
-import CreatePostModal from '../../components/CreatePostModal';
-import EmptyState from '../../components/EmptyState';
+import { useBoardStore } from '../../store/boardstore';
+import PostCard from '../../components/postcard';
+import CreatePostFAB from '../../components/createpostFAB';
+import CreatePostModal from '../../components/createpostmodal';
+import EmptyState from '../../components/emptystate';
 import COLORS from '../../constants/colors';
 
 export default function BoardScreen() {

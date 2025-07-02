@@ -4,11 +4,9 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
-import { useUserStore } from "../store/userStore";
+import { useUserStore } from "../store/userstore";
 
-export const unstable_settings = {
-  initialRouteName: "(tabs)",
-};
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -47,7 +45,7 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
       <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/signup" options={{ headerShown: false }} />
       <Stack.Screen 
@@ -57,13 +55,13 @@ function RootLayoutNav() {
           headerBackTitle: "Boards",
         }} 
       />
-      <Stack.Screen 
+      {/* <Stack.Screen 
         name="boards/create" 
         options={{ 
           headerTitle: "Create Board",
           presentation: "modal",
         }} 
-      />
+      /> */}
     </Stack>
   );
 }

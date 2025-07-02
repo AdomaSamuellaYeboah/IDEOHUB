@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
-import { useBoardStore } from '../../store/boardStore';
-import { useUserStore } from '../../store/userStore';
-import BoardCard from '../../components/BoardCard';
-import EmptyState from '../../components/EmptyState';
-import CreateBoardModal from '../../components/CreateBoardModal';
+import { useBoardStore } from '../../store/boardstore';
+import { useUserStore } from '../../store/userstore';
+import BoardCard from '../../components/boardcard';
+import EmptyState from '../../components/emptystate';
+import CreateBoardModal from '../../components/createboardmodal';
 import COLORS from '../../constants/colors';
 
 export default function BoardsScreen() {

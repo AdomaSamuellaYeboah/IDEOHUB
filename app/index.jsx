@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
 import { Redirect } from 'expo-router';
-import { useUserStore } from '../store/userStore';
+import { useUserStore } from '../store/userstore';
 
 export default function Index() {
   const { isAuthenticated } = useUserStore();
