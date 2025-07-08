@@ -1,16 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Pressable, Switch, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Switch, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { 
-  LogOut, 
-  Moon, 
-  Sun, 
-  Bell, 
-  User, 
-  Shield, 
-  HelpCircle, 
-  Info 
-} from 'lucide-react-native';
+import { LogOut, Moon, Sun, Bell, User, Shield, HelpCircle, Info } from 'lucide-react-native';
 import { useUserStore } from '../../store/userstore';
 import COLORS from '../../constants/colors';
 
@@ -23,10 +14,16 @@ export default function SettingsScreen() {
     router.replace('/login');
   };
   
-  const isDarkMode = theme === 'dark';
+  const [isDarkMode, setIsDarkMode] = React.useState(theme === 'dark');
+  
+  React.useEffect(() => {
+    setIsDarkMode(theme === 'dark');
+  }, [theme]);
   
   const toggleTheme = () => {
-    setTheme(isDarkMode ? 'light' : 'dark');
+    const newTheme = isDarkMode ? 'light' : 'dark';
+    setTheme(newTheme);
+    setIsDarkMode(!isDarkMode);
   };
 
   return (
@@ -107,7 +104,7 @@ export default function SettingsScreen() {
           <View style={styles.settingIconContainer}>
             <Info size={20} color={COLORS.light.textPrimary} />
           </View>
-          <Text style={styles.settingLabel}>About IdeaHub</Text>
+          <Text style={styles.settingLabel}>About IdeoHub</Text>
         </Pressable>
       </View>
       

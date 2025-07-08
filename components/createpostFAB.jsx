@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   buttonPressed: {
     opacity: 0.8,
   },
-});;
+});
 
 CreatePostFAB.propTypes = {
   onPress: PropTypes.func.isRequired,

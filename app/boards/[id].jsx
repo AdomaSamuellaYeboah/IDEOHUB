@@ -113,6 +113,7 @@ export default function BoardScreen() {
       case 'grid':
         return (
           <FlatList
+            key={`grid-${width > 500 ? 'wide' : 'narrow'}`}
             data={posts}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <PostCard post={item} />}
@@ -123,7 +124,8 @@ export default function BoardScreen() {
       case 'stream':
         return (
           <FlatList
-            data={posts}
+            key={`stream-${width > 500 ? 'wide' : 'narrow'}`}
+              data={posts}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <View style={styles.streamItem}>

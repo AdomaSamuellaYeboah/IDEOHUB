@@ -9,7 +9,7 @@ export const useUserStore = create(
       user: null,
       isAuthenticated: false,
       theme: 'system',
-      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      setUser: (user) => set({ user, isAuthenticated: true }),
       setTheme: (theme) => set({ theme }),
       logout: () => set({ user: null, isAuthenticated: false }),
     }),

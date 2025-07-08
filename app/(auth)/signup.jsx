@@ -7,12 +7,15 @@ import {
   Pressable, 
   KeyboardAvoidingView, 
   Platform,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUserStore } from '../../store/userstore';
 import COLORS from '../../constants/colors';
+import api from '../../store/api';
+import axios from 'axios';
 
 export default function SignupScreen() {
   const [name, setName] = useState('');
@@ -24,7 +27,7 @@ export default function SignupScreen() {
   const router = useRouter();
   const { setUser } = useUserStore();
   
-  const handleSignup = () => {
+  const handleSignup = async () => {
     setIsLoading(true);
     setError('');
     
@@ -35,30 +38,77 @@ export default function SignupScreen() {
       return;
     }
     
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
+      setIsLoading(false);
+      return;
+    }
+
+    //validate email with email regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Invalid email format');
       setIsLoading(false);
       return;
     }
     
-    // Simulate API call
-    setTimeout(() => {
-      // For demo purposes, create a mock user
-      const mockUser = {
-        id: '1',
-        name: name.trim(),
-        email: email.trim(),
-        createdAt: new Date().toISOString(),
-        preferences: {
-          theme: 'system',
-          notifications: true,
-        }
+    //user data to be passed to the api for signup at
+    //http://localhost:3000/register
+    const mockUser = {
+      email: email.trim(),
+      password: password.trim()
+    };
+
+    try {
+      //show that the content is a json file
+      const headers = {
+        'Content-Type': 'application/json',
       };
+
+      const data = mockUser;
+
+      //makes a post request to the api
+      const response = await axios.post(`${api}register`, data, {
+        headers
+      });
+
+      //logs the response data
+      console.log(response.data);
+
+      if(response.data.status === 'success'){
+        Alert.alert('Success', 'User registered successfully');
+        
+        //redirects to the home screen
+        router.replace('/');
+        
+        //sets the user data
+        setUser(mockUser);
+      }
+      
+     
+      
+    } catch (error) {
+      if (error.response) {
+       if(error.response.status === 400){
+         Alert.alert('Error', error.response.data.message || 'Something went wrong');
+       }else if(error.response.status === 401){
+         Alert.alert('Error', error.response.data.message || 'Something went wrong');
+       }else if(error.response.status === 404){
+         Alert.alert('Error', error.response.data.message || 'Something went wrong');
+       }else if(error.response.status === 500){
+         Alert.alert('Error', error.response.data.message || 'Something went wrong');
+       }
+      }else{
+        Alert.alert('Error', 'Something went wrong');
+      }
+
+    }
+    
       
       setUser(mockUser);
       router.replace('/');
       setIsLoading(false);
-    }, 1000);
+    
   };
 
   return (

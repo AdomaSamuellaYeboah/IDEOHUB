@@ -5,8 +5,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { useUserStore } from "../store/userstore";
-
-
+import { View, StyleSheet } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -20,7 +19,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   
   // Determine the actual theme to use (user preference or system default)
-  const actualTheme = theme === 'system' ? colorScheme || 'light' : theme;
+  const actualTheme = theme === 'system' ? colorScheme || 'dark' : theme;
 
   useEffect(() => {
     if (error) {
@@ -36,7 +35,9 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    return (
+      <View style={styles.splashContainer} />
+    );
   }
 
   return <RootLayoutNav />;
@@ -45,7 +46,7 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <Stack>
-      {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/signup" options={{ headerShown: false }} />
       <Stack.Screen 
@@ -53,15 +54,18 @@ function RootLayoutNav() {
         options={{ 
           headerTitle: "",
           headerBackTitle: "Boards",
+          headerStyle: {
+            backgroundColor: 'black',
+          },
         }} 
-      />
-      {/* <Stack.Screen 
-        name="boards/create" 
-        options={{ 
-          headerTitle: "Create Board",
-          presentation: "modal",
-        }} 
-      /> */}
+      /> 
     </Stack>
   );
 }
+
+const styles = StyleSheet.create({
+  splashContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+});

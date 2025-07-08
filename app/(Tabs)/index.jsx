@@ -32,13 +32,13 @@ export default function BoardsScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>My Boards</Text>
-        <Pressable 
+       {/* <Pressable 
           style={styles.createButton} 
           onPress={() => setCreateModalVisible(true)}
         >
           <Plus size={20} color="#FFFFFF" />
           <Text style={styles.createButtonText}>New Board</Text>
-        </Pressable>
+        </Pressable> */}
       </View>
 
       {boards.length === 0 ? (

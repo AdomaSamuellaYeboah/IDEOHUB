@@ -48,15 +48,16 @@ const layoutOptions = [
   }
 ];
 
-export default function CreateBoardModal({ 
-  visible, 
-  onClose, 
-  onCreateBoard 
-}) {
+export default function CreateBoardModal() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [layout, setLayout] = useState<BoardLayout>('grid');
+  const [layout, setLayout] = useState('grid');
   const [isPublic, setIsPublic] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(true);
+
+  const handleClose = () => {
+    setIsModalVisible(false);
+  };
 
   const handleCreate = () => {
     if (!title.trim()) {
@@ -64,29 +65,26 @@ export default function CreateBoardModal({
       return;
     }
 
-      isPublic
-    
     // Reset form
     setTitle('');
     setDescription('');
     setLayout('grid');
     setIsPublic(true);
     
-    onClose();
+    handleClose();
   };
 
   return (
     <Modal
-      visible={visible}
+      visible={isModalVisible}
       animationType="slide"
-      onClose
-      onCreateBoard
+      transparent={true}
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Create New Board</Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
+            <Pressable onPress={handleClose} style={styles.closeButton}>
               <X size={24} color={COLORS.light.textSecondary} />
             </Pressable>
           </View>
@@ -151,7 +149,7 @@ export default function CreateBoardModal({
           <View style={styles.footer}>
             <Pressable 
               style={[styles.button, styles.cancelButton]} 
-              onPress={onClose}
+              onPress={handleClose}
             >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </Pressable>
@@ -171,7 +169,7 @@ export default function CreateBoardModal({
       </View>
     </Modal>
   );
-  }
+}
 
 const styles = StyleSheet.create({
   modalContainer: {

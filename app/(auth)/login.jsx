@@ -75,9 +75,14 @@ export default function LoginScreen() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
+            {/* logo */}
+            <Image
+              source={require("../../Assets/images/IdeoHublogo.png")}
+              style={styles.logo}
+            />
             <Text style={styles.logoText}>IH</Text>
           </LinearGradient>
-          <Text style={styles.appName}>IdeaHub</Text>
+          <Text style={styles.appName}>IdeoHub</Text>
           <Text style={styles.tagline}>Collaborate, Create, Connect</Text>
         </View>
         <View style={styles.formContainer}>
