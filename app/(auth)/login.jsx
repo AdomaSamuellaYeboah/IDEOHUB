@@ -47,7 +47,7 @@ export default function LoginScreen() {
         };
 
         setUser(mockUser);
-        router.replace("/(tabs)/index");
+        router.replace("/");
       } else {
         setError("Please enter both email and password");
       }
@@ -79,11 +79,7 @@ export default function LoginScreen() {
             end={{ x: 1, y: 1 }}
           >
             {/* logo */}
-            <Image
-              source={require("../../assets/images/IdeoHublogo.png")}
-              style={styles.logo}
-            />
-            <Text style={styles.logoText}>IH</Text>
+            <Text style={styles.logoText}></Text>
           </LinearGradient>
           <Text style={[styles.appName, { color: colors.textPrimary }]}>IdeoHub</Text>
           <Text style={[styles.tagline, { color: colors.textSecondary }]}>Collaborate, Create, Connect</Text>
@@ -172,7 +168,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
+    overflow: "hidden",
   },
+
   logoText: {
     fontSize: 32,
     fontWeight: "bold",

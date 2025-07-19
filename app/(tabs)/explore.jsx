@@ -26,6 +26,52 @@ export default function ExploreScreen() {
       )
     : publicBoards;
 
+  const handleShareAllBoards = async () => {
+    try {
+      const boardTitles = publicBoards.map(board => board.title).join(', ');
+      await Share.share({
+        message: `Check out these amazing public boards on IdeoHub: ${boardTitles}`,
+        title: 'IdeoHub Public Boards',
+      });
+    } catch (error) {
+      Alert.alert('Error', 'Failed to share boards');
+    }
+  };
+
+  const handleAddMember = () => {
+    Alert.alert(
+      'Invite Friends',
+      'Share IdeoHub with your friends and collaborate together!',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Share App', onPress: async () => {
+          try {
+            await Share.share({
+              message: 'Join me on IdeoHub - a collaborative platform for sharing ideas and creating amazing boards together!',
+              title: 'Join IdeoHub',
+            });
+          } catch (error) {
+            Alert.alert('Error', 'Failed to share app');
+          }
+        }},
+        { text: 'Invite to Board', onPress: () => {
+          Alert.alert('Coming Soon', 'Direct board invitation feature will be available soon!');
+        }}
+      ]
+    );
+  };
+
+  const handleShareBoard = async (board) => {
+    try {
+      await Share.share({
+        message: `Check out this amazing board on IdeoHub: "${board.title}"${board.description ? ` - ${board.description}` : ''}`,
+        title: board.title,
+      });
+    } catch (error) {
+      Alert.alert('Error', 'Failed to share board');
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.searchContainer, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}>

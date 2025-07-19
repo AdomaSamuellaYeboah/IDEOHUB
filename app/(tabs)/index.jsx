@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList, Pressable } from "react-native";
+import { StyleSheet, Text, View, FlatList, Pressable, BackHandler, ToastAndroid } from "react-native";
 import { useRouter } from "expo-router";
-import { Plus, Bell } from "lucide-react-native";
+import { Plus } from "lucide-react-native";
 import { useBoardStore } from "../../store/boardstore";
 import { useUserStore } from "../../store/userstore";
 import BoardCard from "../../components/boardcard";
@@ -17,6 +17,7 @@ export default function BoardsScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
+  const [backPressCount, setBackPressCount] = useState(0);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -26,17 +27,43 @@ export default function BoardsScreen() {
     }
   }, [isAuthenticated]);
 
+  // Handle back button press only on boards tab
+  useEffect(() => {
+    const backAction = () => {
+      // Only handle back press when user is on the boards tab (index)
+      if (router.canGoBack()) {
+        // If user can go back (not on the main tab), let default behavior happen
+        return false;
+      }
+      
+      // User is on the main boards tab - implement double tap to exit
+      if (backPressCount === 0) {
+        setBackPressCount(1);
+        ToastAndroid.show('Press back again to exit', ToastAndroid.SHORT);
+        
+        // Reset back press count after 2 seconds
+        setTimeout(() => {
+          setBackPressCount(0);
+        }, 2000);
+        
+        return true; // Prevent default back action
+      } else {
+        // Second back press - exit app
+        BackHandler.exitApp();
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => backHandler.remove();
+  }, [backPressCount, router]);
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <Text style={[styles.title, { color: colors.textPrimary }]}>My Boards</Text>
                   <View style={styles.headerActions}>
-            <Pressable 
-              style={styles.notificationButton}
-              onPress={() => {}}
-            >
-              <Bell size={20} color={colors.textPrimary} />
-            </Pressable>
           <Pressable
             style={styles.createButton}
             onPress={() => {
@@ -92,26 +119,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  notificationButton: {
-    position: "relative",
-    padding: 8,
-  },
-  notificationBadge: {
-    position: "absolute",
-    top: 4,
-    right: 4,
-    backgroundColor: COLORS.red,
-    borderRadius: 8,
-    minWidth: 16,
-    height: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  notificationBadgeText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontWeight: "bold",
-  },
+
   createButton: {
     flexDirection: "row",
     alignItems: "center",

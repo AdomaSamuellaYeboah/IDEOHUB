@@ -4,7 +4,7 @@
     "slug": "IdeoHub",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/IdeoHubnew.png",
+    "icon": "./assets/images/IdeoHublogo.png",
     "scheme": "IdeoHub",
     "newArchEnabled": true,
     "ios": {
@@ -12,7 +12,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/IdeoHubnew.png",
+        "foregroundImage": "./assets/images/IdeoHublogo.png",
         "backgroundColor": "#000000"
       },
       "edgeToEdgeEnabled": true
@@ -20,14 +20,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/IdeoHubnew.png"
+      "favicon": "./assets/images/IdeoHublogo.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/IdeoHubnew.png",
+          "image": "./assets/images/IdeoHublogo.png",
           "imageWidth": 200,
           "imageHeight": 200,
           "resizeMode": "contain",

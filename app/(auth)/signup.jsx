@@ -104,7 +104,7 @@ export default function SignupScreen() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Text style={styles.logoText}>IH</Text>
+            <Text style={styles.logoText}></Text>
           </LinearGradient>
           <Text style={[styles.appName, { color: colors.textPrimary }]}>IdeoHub</Text>
           <Text style={[styles.tagline, { color: colors.textSecondary }]}>Join the community</Text>

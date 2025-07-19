@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Pressable, Switch, ScrollView, Platform, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LogOut, Moon, Sun, Bell, User, Shield, HelpCircle, Info } from 'lucide-react-native';
+import { LogOut, Moon, Sun, Bell, User, Shield, HelpCircle, Info, ChevronRight } from 'lucide-react-native';
 import { useUserStore } from '../../store/userstore';
 import COLORS from '../../constants/colors';
 import { useColorScheme } from 'react-native';
 import EditProfileModal from '../../components/editprofilemodal';
-import SecurityModal from '../../components/securitymodal';
+import NotificationsModal from '../../components/notificationsmodal';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -14,11 +14,11 @@ export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   
   const handleLogout = () => {
     logout();
-    router.replace('/login');
+    router.replace('/');
   };
   
   // Determine if dark mode is currently active
@@ -68,7 +68,7 @@ export default function SettingsScreen() {
               )}
             </View>
             <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>
-              {isDarkModeActive ? 'Dark Mode' : 'Light Mode'}
+              Dark Mode
             </Text>
             <Switch
               value={isDarkModeActive}
@@ -78,18 +78,16 @@ export default function SettingsScreen() {
             />
           </View>
           
-          <View style={[styles.settingItem, { borderBottomColor: colors.border }]}>
+          <Pressable 
+            style={[styles.settingItem, { borderBottomColor: colors.border }]}
+            onPress={() => setShowNotificationsModal(true)}
+          >
             <View style={styles.settingIconContainer}>
               <Bell size={20} color={colors.textPrimary} />
             </View>
             <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>Notifications</Text>
-            <Switch
-              value={false}
-              onValueChange={() => {}}
-              trackColor={{ false: colors.border, true: COLORS.orange }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
+            
+          </Pressable>
         </View>
         
         <View style={styles.section}>
@@ -106,7 +104,7 @@ export default function SettingsScreen() {
           </Pressable>
           
           <Pressable style={[styles.settingItem, { borderBottomColor: colors.border }]}
-            onPress={() => setShowSecurityModal(true)}>
+            onPress={() => router.push('/security')}>
             <View style={styles.settingIconContainer}>
               <Shield size={20} color={colors.textPrimary} />
             </View>
@@ -144,10 +142,9 @@ export default function SettingsScreen() {
         visible={showEditProfile}
         onClose={() => setShowEditProfile(false)}
       />
-      <SecurityModal
-        visible={showSecurityModal}
-        onClose={() => setShowSecurityModal(false)}
-        colors={colors}
+      <NotificationsModal
+        visible={showNotificationsModal}
+        onClose={() => setShowNotificationsModal(false)}
       />
     </>
   );
