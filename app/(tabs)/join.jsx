@@ -25,12 +25,6 @@ export default function JoinScreen() {
       description: "Enter a shared link to join a board",
       onPress: () => router.push("/createboard/link"), // Assuming this is the correct path for joining with link
     },
-    {
-      icon: "email",
-      title: "Join with Email",
-      description: "Request to join a board via email",
-      onPress: () => router.push("/createboard/email"), // Assuming this is the correct path for joining with email
-    },
   ];
 
   return (

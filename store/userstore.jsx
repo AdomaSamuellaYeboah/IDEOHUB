@@ -14,6 +14,14 @@ export const useUserStore = create(
         user: { ...state.user, ...updatedUser },
         isAuthenticated: true 
       })),
+      // Helper selectors for following/followers count
+      followingCount: () => get().user?.following?.length || 0,
+      followersCount: () => get().user?.followers?.length || 0,
+      // Board like helpers
+      likeBoard: (boardId) => set((state) => ({ user: { ...state.user, likedBoards: [...(state.user?.likedBoards || []), boardId] } })),
+      unlikeBoard: (boardId) => set((state) => ({ user: { ...state.user, likedBoards: (state.user?.likedBoards || []).filter(id => id !== boardId) } })),
+      isBoardLiked: (boardId) => !!get().user?.likedBoards?.includes(boardId),
+      likedBoardsCount: () => get().user?.likedBoards?.length || 0,
       setTheme: (theme) => set({ theme }),
       logout: () => set({ user: null, isAuthenticated: false }),
       getThemeColors: (colorScheme) => {

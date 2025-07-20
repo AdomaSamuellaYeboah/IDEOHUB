@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Grid, List, Clock } from 'lucide-react-native';
+import { Grid, List, Clock, Heart } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import COLORS from '../constants/colors';
 import { useUserStore } from '../store/userstore';
@@ -22,12 +22,18 @@ const getLayoutIcon = (layout) => {
 
 export default function BoardCard({ board }) {
   const router = useRouter();
-  const { getThemeColors } = useUserStore();
+  const { getThemeColors, likeBoard, unlikeBoard, isBoardLiked } = useUserStore();
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
 
   const handlePress = () => {
     router.push(`/boards/${board.id}`);
+  };
+
+  const liked = isBoardLiked?.(board.id);
+  const handleLike = (e) => {
+    e.stopPropagation && e.stopPropagation();
+    liked ? unlikeBoard(board.id) : likeBoard(board.id);
   };
 
   return (
@@ -56,6 +62,9 @@ export default function BoardCard({ board }) {
             {board.isPublic ? 'Public' : 'Private'}
           </Text>
         </View>
+        <Pressable onPress={handleLike} style={{ marginLeft: 8, padding: 4 }}>
+          <Heart size={20} color={liked ? COLORS.red : colors.textSecondary} fill={liked ? COLORS.red : 'transparent'} />
+        </Pressable>
       </View>
     </Pressable>
   );

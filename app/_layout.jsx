@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { useUserStore } from "../store/userstore";
 import { View, StyleSheet } from "react-native";
+import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,7 +39,12 @@ export default function RootLayout() {
     return <View style={styles.splashContainer} />;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <>
+      <ExpoStatusBar style="auto" hidden={false} />
+      <RootLayoutNav />
+    </>
+  );
 }
 
 function RootLayoutNav() {

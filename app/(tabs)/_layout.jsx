@@ -11,6 +11,7 @@ import {
 import COLORS from "../../constants/colors";
 import { Dimensions } from "react-native";
 import { StatusBar, View } from "react-native";
+import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import { useColorScheme } from "react-native";
 import { useUserStore } from "../../store/userstore";
 
@@ -23,6 +24,7 @@ export default function TabLayout() {
 
   return (
     <>
+      <ExpoStatusBar style="auto" translucent={false} hidden={false} />
       <View style={{ height: statusBarHeight, backgroundColor: colors.background }} />
       <View style={{ flex: 1, backgroundColor: colors.background }}>
         <Tabs

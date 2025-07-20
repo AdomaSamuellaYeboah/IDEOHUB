@@ -47,13 +47,11 @@ export default function SettingsScreen() {
             </View>
           )}
         </Pressable>
-        <Text style={[styles.profileName, { color: colors.textPrimary }]}>
-          {user?.firstName && user?.lastName 
-            ? `${user.firstName} ${user.lastName}`.trim()
-            : user?.name || 'User'
-          }
-        </Text>
-        <Text style={[styles.profileEmail, { color: colors.textSecondary }]}>{user?.email || 'user@example.com'}</Text>
+        {/* Following/Followers counts */}
+        <View style={{ flexDirection: 'row', marginTop: 8 }}>
+          <Text style={[{ marginHorizontal: 12, fontWeight: 'bold', color: colors.textPrimary }]}>{useUserStore.getState().followingCount()} Following</Text>
+          <Text style={[{ marginHorizontal: 12, fontWeight: 'bold', color: colors.textPrimary }]}>{useUserStore.getState().followersCount()} Followers</Text>
+        </View>
       </View>
         
         <View style={styles.section}>
