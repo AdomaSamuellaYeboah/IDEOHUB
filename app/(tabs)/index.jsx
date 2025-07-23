@@ -20,11 +20,12 @@ export default function BoardsScreen() {
   const [backPressCount, setBackPressCount] = useState(0);
 
   useEffect(() => {
+    // Only fetch boards if authenticated
     if (isAuthenticated) {
       fetchBoards();
-    } else {
-      router.replace("/login");
     }
+    // Removed the else block to prevent automatic redirection
+    // This allows the login flow to work smoothly
   }, [isAuthenticated]);
 
   // Handle back button press only on boards tab

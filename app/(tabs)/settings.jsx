@@ -20,6 +20,7 @@ export default function SettingsScreen() {
     logout();
     router.replace('/');
   };
+
   
   // Determine if dark mode is currently active
   const isDarkModeActive = theme === 'dark' || (theme === 'system' && colorScheme === 'dark');
@@ -47,10 +48,18 @@ export default function SettingsScreen() {
             </View>
           )}
         </Pressable>
+        <Text style={[styles.profileName, { color: colors.textPrimary }]}>
+          {user?.firstName && user?.lastName 
+            ? `${user.firstName} ${user.lastName}`.trim()
+            : user?.name || 'User'
+          }
+        </Text>
+        <Text style={[styles.profileEmail, { color: colors.textSecondary }]}>{user?.email || 'user@example.com'}</Text>
         {/* Following/Followers counts */}
-        <View style={{ flexDirection: 'row', marginTop: 8 }}>
-          <Text style={[{ marginHorizontal: 12, fontWeight: 'bold', color: colors.textPrimary }]}>{useUserStore.getState().followingCount()} Following</Text>
-          <Text style={[{ marginHorizontal: 12, fontWeight: 'bold', color: colors.textPrimary }]}>{useUserStore.getState().followersCount()} Followers</Text>
+        <View style={{ flexDirection: 'row', marginTop: 16 }}>
+          <Text style={[styles.followCount, { color: colors.textPrimary }]}>{useUserStore.getState().followingCount()} Following</Text>
+          
+          <Text style={[styles.followCount, { color: colors.textPrimary }]}>{useUserStore.getState().followersCount()} Followers</Text>
         </View>
       </View>
         
@@ -113,18 +122,26 @@ export default function SettingsScreen() {
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>About</Text>
           
-          <Pressable style={[styles.settingItem, { borderBottomColor: colors.border }]}>
+          <Pressable 
+            style={[styles.settingItem, { borderBottomColor: colors.border }]}
+            onPress={() => router.push('/helpscreen')}
+          >
             <View style={styles.settingIconContainer}>
               <HelpCircle size={20} color={colors.textPrimary} />
             </View>
             <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>Help & Support</Text>
+            <ChevronRight size={20} color={colors.textSecondary} />
           </Pressable>
           
-          <Pressable style={[styles.settingItem, { borderBottomColor: colors.border }]}>
+          <Pressable 
+            style={[styles.settingItem, { borderBottomColor: colors.border }]}
+            onPress={() => router.push('/about')}
+          >
             <View style={styles.settingIconContainer}>
               <Info size={20} color={colors.textPrimary} />
             </View>
             <Text style={[styles.settingLabel, { color: colors.textPrimary }]}>About IdeoHub</Text>
+            <ChevronRight size={20} color={colors.textSecondary} />
           </Pressable>
         </View>
         

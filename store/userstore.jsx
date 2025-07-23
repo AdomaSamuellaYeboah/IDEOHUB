@@ -7,12 +7,13 @@ export const useUserStore = create(
   persist(
     (set, get) => ({
       user: null,
-      isAuthenticated: false,
+      isAuthenticated: true,
+      jwt:null,
       theme: 'light', // Default to light theme
-      setUser: (user) => set({ user, isAuthenticated: true }),
-      updateUser: (updatedUser) => set((state) => ({ 
-        user: { ...state.user, ...updatedUser },
-        isAuthenticated: true 
+      setUser: (updatedUser,isAuth,jwt) => set((state) => ({ 
+        user: updatedUser,
+        isAuthenticated: isAuth,
+        jwt: jwt
       })),
       // Helper selectors for following/followers count
       followingCount: () => get().user?.following?.length || 0,

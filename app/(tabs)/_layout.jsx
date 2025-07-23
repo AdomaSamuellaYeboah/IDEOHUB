@@ -24,7 +24,7 @@ export default function TabLayout() {
 
   return (
     <>
-      <ExpoStatusBar style="auto" translucent={false} hidden={false} />
+      <ExpoStatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <View style={{ height: statusBarHeight, backgroundColor: colors.background }} />
       <View style={{ flex: 1, backgroundColor: colors.background }}>
         <Tabs

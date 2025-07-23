@@ -41,7 +41,7 @@ export default function RootLayout() {
 
   return (
     <>
-      <ExpoStatusBar style="auto" hidden={false} />
+      <ExpoStatusBar style={actualTheme === 'dark' ? 'light' : 'dark'} />
       <RootLayoutNav />
     </>
   );
@@ -74,6 +74,13 @@ function RootLayoutNav() {
             backgroundColor: "black",
           },
         }}
+      />
+      {/* Help & Support Group */}
+      <Stack.Screen 
+        name="helpscreen" 
+        options={{ 
+          headerShown: false 
+        }} 
       />
     </Stack>
   );

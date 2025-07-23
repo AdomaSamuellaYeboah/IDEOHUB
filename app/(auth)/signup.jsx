@@ -17,6 +17,7 @@ import COLORS from '../../constants/colors';
 import api from '../../store/api';
 import axios from 'axios';
 import { useColorScheme } from 'react-native';
+import { replace } from 'expo-router/build/global-state/routing';
 
 export default function SignupScreen() {
   const [name, setName] = useState('');
@@ -63,27 +64,14 @@ export default function SignupScreen() {
     };
 
     try {
-      // In a real app, you would make an API call here
-      // const response = await api.post('/register', mockUser);
+      const response = await axios.post(`${api}/register`,mockUser)
       
-      // For demo purposes, simulate successful signup
-      setTimeout(() => {
-        const newUser = {
-          id: Date.now().toString(),
-          name: name.trim(),
-          email: email.trim(),
-          createdAt: new Date().toISOString(),
-          preferences: {
-            theme: 'system',
-            notifications: true,
-          },
-        };
-        
-        setUser(newUser);
-        router.replace('/(tabs)/index');
+      if (response.data.status) {
+        Alert.alert(response.data.message)
         setIsLoading(false);
-      }, 1000);
-      
+        router.replace('/(auth)/login')
+      }
+        
     } catch (error) {
       setError('Failed to create account. Please try again.');
       setIsLoading(false);

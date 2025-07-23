@@ -106,7 +106,7 @@ const ChatScreen = () => {
             isMe ? styles.myMessageBubble : [styles.otherMessageBubble, { backgroundColor: colors.cardBackground }],
           ]}
         >
-          {!isMe && <Text style={[styles.senderName, { color: colors.textPrimary }]}>AI</Text>}
+          {!isMe && <Text style={[styles.senderName, { color: colors.textPrimary }]}>Ideo</Text>}
           <Text style={isMe ? styles.myMessageText : [styles.otherMessageText, { color: colors.textPrimary }]}>
             {item.text}
           </Text>
@@ -127,7 +127,7 @@ const ChatScreen = () => {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.cardBackground, borderBottomColor: colors.border }]}>
         <Brain style={[styles.headerAvatar, { color: colors.textPrimary }]} />
-        <Text style={[styles.headerName, { color: colors.textPrimary }]}>AI Chat</Text>
+        <Text style={[styles.headerName, { color: colors.textPrimary }]}>Ideo Chat</Text>
         <View style={styles.headerStatus}>
           <View style={styles.statusIndicator} />
           <Text style={[styles.statusText, { color: colors.textSecondary }]}>Online</Text>

@@ -30,45 +30,23 @@ export default function LoginScreen() {
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
 
-  const handleLogin = async () => {
-    try {
-      // Simple frontend validation
-      if (!email.trim()) {
-        setError("Email is required");
-        return;
-      }
-
-      if (!password.trim()) {
-        setError("Password is required");
-        return;
-      }
-
-      // Clear any previous errors
-      setError("");
-      
-      // Set loading state
-      setIsLoading(true);
-      
-      // Set user as authenticated
-      // For demo purposes, we're using a dummy user object
-      const dummyUser = {
-        id: 'demo-user',
-        email: email,
-        name: email.split('@')[0], // Use the part before @ as the username
-        // Add any other user properties you need
-      };
-      
-      // Update the user store with the authenticated user
-      setUser(dummyUser, true, 'dummy-jwt-token');
-      
-      // Navigate to main app
-      router.replace('/(tabs)');
-      
-    } catch (error) {
-      setError(error.message || 'An error occurred during login');
-    } finally {
-      setIsLoading(false);
+  const handleLogin = () => {
+    // Simple frontend validation
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
     }
+
+    if (!password.trim()) {
+      setError("Password is required");
+      return;
+    }
+
+    // Clear any previous errors
+    setError("");
+    
+    // Navigate to main app
+    router.replace('/(tabs)');
   };
 
   
