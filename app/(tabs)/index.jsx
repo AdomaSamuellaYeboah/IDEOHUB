@@ -11,7 +11,7 @@ import COLORS from "../../constants/colors";
 import { useColorScheme } from "react-native";
 
 export default function BoardsScreen() {
-  const { boards, fetchBoards } = useBoardStore();
+  const { boards, fetchBoards, createBoard } = useBoardStore();
   const [handleOpen, setHandleOpen] = useState(false);
   const { isAuthenticated, getThemeColors } = useUserStore();
   const router = useRouter();
@@ -94,6 +94,9 @@ export default function BoardsScreen() {
       <CreateBoardModal
         visible={handleOpen}
         onClose={() => setHandleOpen(false)}
+        onCreate={async (newBoard) => {
+          await createBoard(newBoard);
+        }}
       />
     </View>
   );
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
   },
   title: {

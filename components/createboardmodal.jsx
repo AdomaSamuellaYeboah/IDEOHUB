@@ -8,6 +8,8 @@ import {
   Modal,
   ScrollView,
   Switch,
+  TouchableOpacity,
+  Image
 } from "react-native";
 import {
   X,
@@ -20,6 +22,7 @@ import {
 import COLORS from "../constants/colors";
 import { useUserStore } from "../store/userstore";
 import { useColorScheme } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
 
 const layoutOptions = [
   {
@@ -54,12 +57,13 @@ const layoutOptions = [
   },
 ];
 
-export default function CreateBoardModal({ visible, onClose }) {
+export default function CreateBoardModal({ visible, onClose, onCreate }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [layout, setLayout] = useState("grid");
   const [isPublic, setIsPublic] = useState(true);
-  
+  const [image, setImage] = useState(null);
+
   const { getThemeColors } = useUserStore();
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
@@ -70,17 +74,45 @@ export default function CreateBoardModal({ visible, onClose }) {
 
   const handleCreate = () => {
     if (!title.trim()) {
-      // Show error
+      // Optionally show error UI here
       return;
+    }
+
+    const newBoard = {
+      title: title.trim(),
+      description: description.trim(),
+      layout,
+      isPublic,
+      coverImage: image,
+    };
+    if (typeof onCreate === 'function') {
+      onCreate(newBoard);
     }
 
     // Reset form
     setTitle("");
     setDescription("");
+    setImage(null);
     setLayout("grid");
     setIsPublic(true);
 
-    handleClose();
+
+    if (typeof onClose === 'function') {
+      onClose();
+    }
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.cancelled && result.assets && result.assets.length > 0) {
+      setImage(result.assets[0].uri);
+    }
   };
 
   return (
@@ -95,6 +127,19 @@ export default function CreateBoardModal({ visible, onClose }) {
           </View>
 
           <ScrollView style={styles.form}>
+          <Text style={[styles.label, { color: colors.textPrimary }]}>Image Of The Board</Text>
+          <View style={styles.addImage}>
+              <TouchableOpacity onPress={pickImage}>
+                {image ? (
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: 300, height: 80, borderRadius: 8 }}
+                  />
+                ) : (
+                  <Text>+ Add Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
             <Text style={[styles.label, { color: colors.textPrimary }]}>Board Title</Text>
             <TextInput
               style={[styles.input, { backgroundColor: colors.cardBackground, borderColor: colors.border, color: colors.textPrimary }]}
@@ -114,6 +159,9 @@ export default function CreateBoardModal({ visible, onClose }) {
               multiline
               numberOfLines={3}
             />
+           
+
+
 
             <Text style={[styles.label, { color: colors.textPrimary }]}>Layout</Text>
             <View style={styles.layoutOptions}>
@@ -289,4 +337,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+  addImage: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: 'center',
+    height: 90,
+    padding: 12,
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 8,
+    color: COLORS.textPrimary,
+  }
 });

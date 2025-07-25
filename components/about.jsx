@@ -111,8 +111,11 @@ export default function About() {
             onPress={() => router.push('/privacy-policy')}
           >
             <Shield size={20} color={colors.orange} />
+            <View style={styles.linkTextContainer}>
             <Text style={[styles.linkText, { color: colors.textPrimary }]}>Privacy Policy</Text>
+            <Text style={[styles.linkText, { color: colors.textSecondary }]}></Text>
             <ArrowUpRight size={18} color={colors.textSecondary} />
+            </View>
           </Pressable>
           <Pressable 
             style={({ pressed }) => [
