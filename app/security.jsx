@@ -13,7 +13,6 @@ export default function SecurityScreen() {
   const colors = getThemeColors(colorScheme);
   
   // Change Password State
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -35,7 +34,6 @@ export default function SecurityScreen() {
     }
     // Mock password change
     Alert.alert('Success', 'Password changed successfully!');
-    setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
   };
@@ -118,14 +116,6 @@ export default function SecurityScreen() {
 
         {/* Change Password */}
         <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Change Password</Text>
-        <TextInput
-          style={[styles.input, { backgroundColor: colors.cardBackground, color: colors.textPrimary, borderColor: colors.border }]}
-          placeholder="Current Password"
-          placeholderTextColor={colors.textSecondary}
-          secureTextEntry
-          value={currentPassword}
-          onChangeText={setCurrentPassword}
-        />
         <TextInput
           style={[styles.input, { backgroundColor: colors.cardBackground, color: colors.textPrimary, borderColor: colors.border }]}
           placeholder="New Password"

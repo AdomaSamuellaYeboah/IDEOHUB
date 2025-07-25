@@ -36,20 +36,6 @@ export default function HelpSupport() {
       onPress: () => Linking.openURL('mailto:support@ideohub.com')
     },
     {
-      id: 'privacy',
-      title: 'Privacy Policy',
-      description: 'Learn how we protect your data',
-      icon: <Shield size={24} color={safeColors.orange} />,
-      onPress: () => router.push('/privacy-policy')
-    },
-    {
-      id: 'terms',
-      title: 'Terms of Service',
-      description: 'Read our terms and conditions',
-      icon: <FileText size={24} color={safeColors.orange} />,
-      onPress: () => router.push('/terms')
-    },
-    {
       id: 'security',
       title: 'Security Guide',
       description: 'Tips to keep your account secure',

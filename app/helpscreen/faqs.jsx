@@ -101,7 +101,7 @@ export default function FAQScreen() {
             style={[styles.helpButton, { backgroundColor: colors.primary }]}
             onPress={() => router.push('/helpscreen/contact')}
           >
-            <Text style={styles.helpButtonText}>Contact Support</Text>
+            <Text style={[styles.helpButtonText, { color: colors.textPrimary }]}>Contact Support</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
   helpSection: {
     borderRadius: 12,
-    padding: 20,
+    padding: 40,
     marginBottom: 24,
     borderWidth: 1,
   },

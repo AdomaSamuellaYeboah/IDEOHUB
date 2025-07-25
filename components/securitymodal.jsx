@@ -5,14 +5,13 @@ import COLORS from '../constants/colors';
 
 export default function SecurityModal({ visible, onClose, colors }) {
   // Change Password State
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDeleteText, setConfirmDeleteText] = useState('');
 
   const handleChangePassword = () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    if (!newPassword || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all password fields.');
       return;
     }
@@ -22,7 +21,6 @@ export default function SecurityModal({ visible, onClose, colors }) {
     }
     // Mock password change
     Alert.alert('Success', 'Password changed successfully!');
-    setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
   };
@@ -53,14 +51,6 @@ export default function SecurityModal({ visible, onClose, colors }) {
 
             {/* Change Password */}
             <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Change Password</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: colors.background, color: colors.textPrimary, borderColor: colors.border }]}
-              placeholder="Current Password"
-              placeholderTextColor={colors.textSecondary}
-              secureTextEntry
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-            />
             <TextInput
               style={[styles.input, { backgroundColor: colors.background, color: colors.textPrimary, borderColor: colors.border }]}
               placeholder="New Password"

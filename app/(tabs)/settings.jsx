@@ -57,9 +57,7 @@ export default function SettingsScreen() {
         <Text style={[styles.profileEmail, { color: colors.textSecondary }]}>{user?.email || 'user@example.com'}</Text>
         {/* Following/Followers counts */}
         <View style={{ flexDirection: 'row', marginTop: 16 }}>
-          <Text style={[styles.followCount, { color: colors.textPrimary }]}>{useUserStore.getState().followingCount()} Following</Text>
-          
-          <Text style={[styles.followCount, { color: colors.textPrimary }]}>{useUserStore.getState().followersCount()} Followers</Text>
+          <Text style={[styles.followCount, { color: colors.textPrimary }]}>{useUserStore.getState().followingCount()} Following {useUserStore.getState().followersCount()} Followers</Text>
         </View>
       </View>
         

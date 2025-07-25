@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Linking, Pressable } from 'react-na
 import { useRouter } from 'expo-router';
 import { useUserStore } from '../store/userstore';
 import { useColorScheme } from 'react-native';
-import { ArrowUpRight, Users, Code, Shield, Star, FileText } from 'lucide-react-native';
+import { ArrowUpRight, Users, Code, Shield, Star, FileText, Globe } from 'lucide-react-native';
 
 const APP_VERSION = '1.0.0';
 
@@ -63,8 +63,11 @@ export default function About() {
               }
             ]}
           >
-            <Text style={[styles.websiteLinkText, { color: colors.orange }]}>Visit us on www.ideohub.com</Text>
-            <ArrowUpRight size={18} color={colors.orange} />
+            <Globe size={20} color={colors.orange} />
+            <View style={styles.websiteLinkContainer}>
+            <Text style={[styles.websiteLinkText, { color: colors.textPrimary }]}>Visit Our Website</Text>
+            <Text style={[styles.websiteLinkText, { color: colors.textSecondary }]}>www.ideohub.com</Text>
+            </View>
           </Pressable>
         </View>
 
@@ -92,29 +95,6 @@ export default function About() {
             </View>
           </View>
         </View>
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            Our Team
-          </Text>
-          <View style={styles.teamGrid}>
-            {teamMembers.map((member, index) => (
-              <View 
-                key={index} 
-                style={[styles.teamMember, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}
-              >
-                <View style={[styles.avatar, { backgroundColor: 'rgba(244, 163, 0, 0.1)' }]}>
-                  <Text style={[styles.avatarText, { color: colors.orange }]}>
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </Text>
-                </View>
-                <Text style={[styles.memberName, { color: colors.textPrimary }]}>{member.name}</Text>
-                <Text style={[styles.memberRole, { color: colors.textSecondary }]}>{member.role}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Legal
@@ -150,6 +130,30 @@ export default function About() {
             <ArrowUpRight size={18} color={colors.textSecondary} />
           </Pressable>
         </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            Our Team
+          </Text>
+          <View style={styles.teamGrid}>
+            {teamMembers.map((member, index) => (
+              <View 
+                key={index} 
+                style={[styles.teamMember, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}
+              >
+                <View style={[styles.avatar, { backgroundColor: 'rgba(244, 163, 0, 0.1)' }]}>
+                  <Text style={[styles.avatarText, { color: colors.orange }]}>
+                    {member.name.split(' ').map(n => n[0]).join('')}
+                  </Text>
+                </View>
+                <Text style={[styles.memberName, { color: colors.textPrimary }]}>{member.name}</Text>
+                <Text style={[styles.memberRole, { color: colors.textSecondary }]}>{member.role}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        
 
         <View style={[styles.footer, { borderTopColor: colors.border }]}>
           <Text style={[styles.copyright, { color: colors.textSecondary }]}>

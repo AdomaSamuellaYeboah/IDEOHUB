@@ -37,19 +37,13 @@ export default function HelpSupportScreen() {
       onPress: () => router.push('/helpscreen/contact'),
     },
     {
-      id: 'privacy',
-      title: 'Privacy Policy',
-      description: 'Learn how we protect your data',
+      id: 'security',
+      title: 'Security Guide',
+      description: 'Tips to keep your account secure',
       icon: Shield,
-      onPress: () => router.push('/helpscreen/privacy-policy'),
+      onPress: () => router.push('/helpscreen/security-guide')
     },
-    {
-      id: 'terms',
-      title: 'Terms of Service',
-      description: 'Review our terms and conditions',
-      icon: FileText,
-      onPress: () => router.push('helpscreen/terms'),
-    },
+    
   ];
 
   const contactMethods = [
