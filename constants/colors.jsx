@@ -13,6 +13,7 @@ const COLORS = {
     textPrimary: '#2E3A59',
     textSecondary: '#6B7280',
     border: '#E5E7EB',
+    error: '#ED3E6A',
   },
   
   // Dark theme
@@ -22,6 +23,7 @@ const COLORS = {
     textPrimary: '#F4F4F4',
     textSecondary: '#BFC4D2',
     border: '#3A4055',
+    error: '#ED3E6A',
   }
 };
 

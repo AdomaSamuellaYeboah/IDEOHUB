@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  TextInput, 
-  FlatList, 
-  TouchableOpacity, 
-  Dimensions,
-  Image,
-  Share,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, Dimensions, Image, Share, ActivityIndicator } from 'react-native';
 import { Search, Grid, List, Share2 } from 'lucide-react-native';
 import { useUserStore } from '../../store/userstore';
 import { useColorScheme } from 'react-native';
@@ -99,6 +88,22 @@ const BOARD_TEMPLATES = [
     layout: 'timeline',
     color: '#E91E63',
     icon: <List size={24} color="#E91E63" />,
+  },
+  {
+    name: 'Research Board',
+    description: 'Organize research findings and sources.',
+    type: 'Shelf',
+    layout: 'stream',
+    color: '#795548',
+    icon: <List size={24} color="#795548" />,
+  },
+  {
+    name: 'Design Sprint',
+    description: 'Follow the design sprint methodology.',
+    type: 'Timeline',
+    layout: 'timeline',
+    color: '#FF5722',
+    icon: <List size={24} color="#FF5722" />,
   },
 ];
 
@@ -212,6 +217,9 @@ function TemplateCard({ template }) {
       <Text style={styles.templateName}>{template.name}</Text>
       <Text style={styles.templateType}>{template.type}</Text>
       <Text style={styles.templateDesc}>{template.description}</Text>
+      <View style={[styles.templateBadge, { backgroundColor: template.color + '15' }]}>
+        <Text style={[styles.templateBadgeText, { color: template.color }]}>TEMPLATE</Text>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -251,7 +259,7 @@ export default function ExploreScreen() {
       board.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (board.description && board.description.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchesCategory = selectedCategory === 'All' || 
+    const matchesCategory = selectedCategory === 'General' || 
       board.category === selectedCategory;
     
     return matchesSearch && matchesCategory;
@@ -412,26 +420,40 @@ export default function ExploreScreen() {
           }
         />
       ) : (
-        <FlatList
-          data={galleryWithTemplates}
-          keyExtractor={(item) => item.__type === 'template' ? `template-${item.name}` : `board-${item.id}`}
-          renderItem={({ item }) => (
-            item.__type === 'template' ? (
-              <TemplateCard template={item} />
-            ) : (
-              <GalleryItem 
-                item={item} 
-                colors={colors} 
-                viewMode={viewMode}
-                onShare={handleShareBoard}
-              />
-            )
+        <>
+          {/* Templates Section */}
+          {BOARD_TEMPLATES.length > 0 && (
+            <View style={styles.sectionContainer}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                Board Templates
+              </Text>
+              <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+                Start with a pre-designed template
+              </Text>
+            </View>
           )}
-          numColumns={viewMode === 'grid' ? 2 : 1}
-          contentContainerStyle={styles.galleryContainer}
-          key={viewMode}
-          showsVerticalScrollIndicator={false}
-        />
+          
+          <FlatList
+            data={galleryWithTemplates}
+            keyExtractor={(item) => item.__type === 'template' ? `template-${item.name}` : `board-${item.id}`}
+            renderItem={({ item }) => (
+              item.__type === 'template' ? (
+                <TemplateCard template={item} />
+              ) : (
+                <GalleryItem 
+                  item={item} 
+                  colors={colors} 
+                  viewMode={viewMode}
+                  onShare={handleShareBoard}
+                />
+              )
+            )}
+            numColumns={viewMode === 'grid' ? 2 : 1}
+            contentContainerStyle={styles.galleryContainer}
+            key={viewMode}
+            showsVerticalScrollIndicator={false}
+          />
+        </>
       )}
     </View>
   );
@@ -492,68 +514,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 2,
   },
+  templateBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginTop: 10,
+    alignSelf: 'center',
+  },
+  templateBadgeText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
   container: {
     flex: 1,
     paddingTop: 24,
     paddingHorizontal: 8,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    marginLeft: 8,
-    letterSpacing: 0.5,
-  },
-  grid: {
-    paddingBottom: 32,
-    gap: 8,
-  },
-  templateCard: {
-    flex: 1,
-    margin: 8,
-    backgroundColor: '#fff',
-    borderRadius: 18,
-    borderWidth: 2,
-    alignItems: 'center',
-    padding: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-  },
-  iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  templateName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 2,
-    textAlign: 'center',
-  },
-  templateType: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#888',
-    marginBottom: 6,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    textAlign: 'center',
-  },
-  templateDesc: {
-    fontSize: 13,
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 2,
-  },
-  
-  container: {
-    flex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -616,5 +592,19 @@ const styles = StyleSheet.create({
   },
   galleryContainer: {
     padding: 8,
+  },
+  sectionContainer: {
+    marginTop: 24,
+    marginBottom: 12,
+    paddingHorizontal: 8,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    marginTop: 4,
   },
 });

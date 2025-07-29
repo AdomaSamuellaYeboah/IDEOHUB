@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList, Pressable, BackHandler, ToastAndroid } from "react-native";
+import { StyleSheet, Text, View, FlatList, Pressable, BackHandler, ToastAndroid, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { Plus } from "lucide-react-native";
 import { useBoardStore } from "../../store/boardstore";
@@ -7,12 +7,15 @@ import { useUserStore } from "../../store/userstore";
 import BoardCard from "../../components/boardcard";
 import EmptyState from "../../components/emptystate";
 import CreateBoardModal from "../../components/createboardmodal";
+import EditBoardModal from "../../components/editboardmodal";
 import COLORS from "../../constants/colors";
 import { useColorScheme } from "react-native";
 
 export default function BoardsScreen() {
-  const { boards, fetchBoards, createBoard } = useBoardStore();
+  const { boards, fetchBoards, createBoard, updateBoard, deleteBoard } = useBoardStore();
   const [handleOpen, setHandleOpen] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedBoard, setSelectedBoard] = useState(null);
   const { isAuthenticated, getThemeColors } = useUserStore();
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -60,6 +63,29 @@ export default function BoardsScreen() {
     return () => backHandler.remove();
   }, [backPressCount, router]);
 
+  const handleEditBoard = (board) => {
+    setSelectedBoard(board);
+    setEditModalVisible(true);
+  };
+
+  const handleUpdateBoard = async (updatedData) => {
+    if (selectedBoard) {
+      await updateBoard(selectedBoard.id, updatedData);
+      setEditModalVisible(false);
+      setSelectedBoard(null);
+      // Show success message
+      Alert.alert('Success', 'Board updated successfully!');
+    }
+  };
+
+  const handleDeleteBoard = async () => {
+    if (selectedBoard) {
+      await deleteBoard(selectedBoard.id);
+      setEditModalVisible(false);
+      setSelectedBoard(null);
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
@@ -86,7 +112,12 @@ export default function BoardsScreen() {
         <FlatList
           data={boards}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <BoardCard board={item} />}
+          renderItem={({ item }) => (
+            <BoardCard 
+              board={item} 
+              onEdit={handleEditBoard}
+            />
+          )}
           contentContainerStyle={styles.listContent}
         />
       )}
@@ -97,6 +128,17 @@ export default function BoardsScreen() {
         onCreate={async (newBoard) => {
           await createBoard(newBoard);
         }}
+      />
+
+      <EditBoardModal
+        visible={editModalVisible}
+        onClose={() => {
+          setEditModalVisible(false);
+          setSelectedBoard(null);
+        }}
+        onUpdate={handleUpdateBoard}
+        onDelete={handleDeleteBoard}
+        board={selectedBoard}
       />
     </View>
   );

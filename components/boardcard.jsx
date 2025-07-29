@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Grid, List, Clock, Heart } from 'lucide-react-native';
+import { Grid, List, Clock, Heart, MoreVertical } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import COLORS from '../constants/colors';
 import { useUserStore } from '../store/userstore';
@@ -20,7 +20,7 @@ const getLayoutIcon = (layout) => {
   }
 };
 
-export default function BoardCard({ board }) {
+export default function BoardCard({ board, onEdit }) {
   const router = useRouter();
   const { getThemeColors, likeBoard, unlikeBoard, isBoardLiked } = useUserStore();
   const colorScheme = useColorScheme();
@@ -36,6 +36,13 @@ export default function BoardCard({ board }) {
     liked ? unlikeBoard(board.id) : likeBoard(board.id);
   };
 
+  const handleEdit = (e) => {
+    e.stopPropagation && e.stopPropagation();
+    if (onEdit) {
+      onEdit(board);
+    }
+  };
+
   return (
     <Pressable style={[styles.container, { backgroundColor: colors.cardBackground }]} onPress={handlePress}>
       <View style={styles.imageContainer}>
@@ -49,6 +56,16 @@ export default function BoardCard({ board }) {
         )}
         <View style={styles.overlay} />
         <Text style={styles.title}>{board.title}</Text>
+        {board.description && (
+          <Text style={styles.description} numberOfLines={2}>
+            {board.description}
+          </Text>
+        )}
+        
+        {/* Edit button overlay */}
+        <Pressable style={styles.editButton} onPress={handleEdit}>
+          <MoreVertical size={20} color="#FFFFFF" />
+        </Pressable>
       </View>
       <View style={styles.footer}>
         <View style={[styles.layoutBadge, { backgroundColor: colors.border }]}>
@@ -106,6 +123,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  description: {
+    position: 'absolute',
+    bottom: 40, // Adjust position to be above the title
+    left: 12,
+    right: 12,
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -132,5 +157,17 @@ const styles = StyleSheet.create({
   privacyText: {
     fontSize: 12,
     color: '#FFFFFF',
+  },
+  editButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });

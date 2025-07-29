@@ -6,7 +6,8 @@ import {
   ScrollView, 
   Pressable, 
   FlatList,
-  useWindowDimensions
+  useWindowDimensions,
+  Alert
 } from 'react-native';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { 
@@ -23,7 +24,11 @@ import { useBoardStore } from '../../store/boardstore';
 import PostCard from '../../components/postcard';
 import CreatePostFAB from '../../components/createpostFAB';
 import CreatePostModal from '../../components/createpostmodal';
+import EditBoardModal from '../../components/editboardmodal';
 import EmptyState from '../../components/emptystate';
+import UserProfile from '../../components/userprofile';
+import SocialActions from '../../components/socialactions';
+import CommentModal from '../../components/commentmodal';
 import COLORS from '../../constants/colors';
 import { useUserStore } from '../../store/userstore';
 import { useColorScheme } from 'react-native';
@@ -36,10 +41,14 @@ export default function BoardScreen() {
     fetchBoardById, 
     fetchPosts, 
     changeLayout, 
-    createPost 
+    createPost,
+    updateBoard,
+    deleteBoard
   } = useBoardStore();
   const [createModalVisible, setCreateModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const [layoutMenuVisible, setLayoutMenuVisible] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
   const router = useRouter();
   const { width } = useWindowDimensions();
   
@@ -74,6 +83,27 @@ export default function BoardScreen() {
     if (id && currentBoard) {
       changeLayout(id, layout);
       setLayoutMenuVisible(false);
+    }
+  };
+
+  const handleEditBoard = () => {
+    setEditModalVisible(true);
+  };
+
+  const handleUpdateBoard = async (updatedData) => {
+    if (id) {
+      await updateBoard(id, updatedData);
+      setEditModalVisible(false);
+      // Show success message
+      Alert.alert('Success', 'Board updated successfully!');
+    }
+  };
+
+  const handleDeleteBoard = async () => {
+    if (id) {
+      await deleteBoard(id);
+      setEditModalVisible(false);
+      router.back();
     }
   };
   
@@ -196,7 +226,7 @@ export default function BoardScreen() {
               <Pressable style={styles.headerButton}>
                 <Users size={20} color={colors.textPrimary} />
               </Pressable>
-              <Pressable style={styles.headerButton}>
+              <Pressable style={styles.headerButton} onPress={handleEditBoard}>
                 <MoreVertical size={20} color={colors.textPrimary} />
               </Pressable>
             </View>
@@ -256,6 +286,26 @@ export default function BoardScreen() {
         )}
       </View>
       
+      {/* User Profile */}
+      <UserProfile userId={currentBoard.ownerId} boardId={id} />
+      
+      {/* Social Actions for Public Boards */}
+      {currentBoard.isPublic && (
+        <SocialActions 
+          boardId={id} 
+          onCommentPress={() => setCommentModalVisible(true)}
+        />
+      )}
+      
+      {/* Board Description */}
+      {currentBoard.description && (
+        <View style={[styles.descriptionContainer, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}>
+          <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
+            {currentBoard.description}
+          </Text>
+        </View>
+      )}
+      
       {renderContent()}
       
       <CreatePostFAB onPress={() => setCreateModalVisible(true)} />
@@ -265,6 +315,20 @@ export default function BoardScreen() {
         onClose={() => setCreateModalVisible(false)}
         onCreatePost={handleCreatePost}
         boardId={id || ''}
+      />
+
+      <EditBoardModal
+        visible={editModalVisible}
+        onClose={() => setEditModalVisible(false)}
+        onUpdate={handleUpdateBoard}
+        onDelete={handleDeleteBoard}
+        board={currentBoard}
+      />
+
+      <CommentModal
+        visible={commentModalVisible}
+        onClose={() => setCommentModalVisible(false)}
+        boardId={id}
       />
     </View>
   );
@@ -357,5 +421,15 @@ const styles = StyleSheet.create({
   },
   mapPlaceholder: {
     fontSize: 16,
+  },
+  descriptionContainer: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
+    borderColor: '#eee', // Default border color
+  },
+  descriptionText: {
+    fontSize: 14,
+    lineHeight: 20,
   },
 });
