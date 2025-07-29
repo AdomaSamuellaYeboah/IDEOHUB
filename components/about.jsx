@@ -24,7 +24,7 @@ export default function About() {
     { 
       name: 'Nuhu Haruna', 
       role: 'Lead Developer',
-      avatar: require('../assets/images/IdeoHubicon.png')
+      avatar: require('../assets/images/Nuhu.jpg')
     },
     { 
       name: 'Dinko Ntewini Michael', 
@@ -314,12 +314,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   teamGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginHorizontal: -8,
   },
   teamMember: {
-    width: '47%',
     borderRadius: 12,
     padding: 12,
     margin: 6,
@@ -334,6 +330,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
     overflow: 'hidden',
+    scale: 1.5,
   },
 
   avatarImage: {

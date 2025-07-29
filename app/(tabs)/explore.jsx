@@ -226,7 +226,7 @@ function TemplateCard({ template }) {
 
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('Genaral');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [isLoading, setIsLoading] = useState(true);
   
