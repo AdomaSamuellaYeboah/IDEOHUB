@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Linking, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUserStore } from '../../store/userstore';
 import { useColorScheme } from 'react-native';
@@ -97,7 +97,7 @@ export default function HelpSupportScreen() {
                 onPress={option.onPress}
               >
                 <View style={[styles.optionIconContainer, { backgroundColor: colors.primary + '15' }]}>
-                  <option.icon size={20} color={colors.primary} />
+                  <option.icon size={20} color={colors.orange} />
                 </View>
                 <View style={styles.optionTextContainer}>
                   <Text style={[styles.optionTitle, { color: colors.textPrimary }]}>
@@ -132,7 +132,7 @@ export default function HelpSupportScreen() {
                 onPress={method.onPress}
               >
                 <View style={[styles.contactIconContainer, { backgroundColor: colors.primary + '15' }]}>
-                  <method.icon size={18} color={colors.primary} />
+                  <method.icon size={18} color={colors.orange} />
                 </View>
                 <View style={styles.contactTextContainer}>
                   <Text style={[styles.contactTitle, { color: colors.textPrimary }]}>
@@ -150,7 +150,7 @@ export default function HelpSupportScreen() {
         <View style={[styles.chatSection, { backgroundColor: colors.primary + '10' }]}>
           <View style={styles.chatContent}>
             <View style={[styles.chatIcon, { backgroundColor: colors.primary + '20' }]}>
-              <MessageCircle size={24} color={colors.primary} />
+              <MessageCircle size={24} color={colors.orange} />
             </View>
             <View style={styles.chatTextContainer}>
               <Text style={[styles.chatTitle, { color: colors.textPrimary }]}>
@@ -281,11 +281,12 @@ const styles = StyleSheet.create({
   chatContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingBottom:60,
   },
   chatIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   chatButtonText: {
-    color: 'white',
+    color: 'black',
     fontWeight: '600',
     fontSize: 14,
   },

@@ -9,7 +9,7 @@ import {
   Dimensions,
   Image,
   Share,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { Search, Grid, List, Share2 } from 'lucide-react-native';
 import { useUserStore } from '../../store/userstore';
@@ -18,10 +18,94 @@ import { useBoardStore } from '../../store/boardstore';
 import EmptyState from '../../components/emptystate';
 
 const { width } = Dimensions.get('window');
+
+const BOARD_TEMPLATES = [
+  {
+    name: 'Brainstorm Wall',
+    description: 'Freeform space for ideas and sticky notes.',
+    type: 'Wall',
+    layout: 'grid',
+    color: '#FF9800',
+    icon: <Grid size={24} color="#FF9800" />,
+  },
+  {
+    name: 'Timeline',
+    description: 'Chronological events or project milestones.',
+    type: 'Timeline',
+    layout: 'timeline',
+    color: '#2196F3',
+    icon: <List size={24} color="#2196F3" />,
+  },
+  {
+    name: 'Feedback Shelf',
+    description: 'Collect and categorize feedback.',
+    type: 'Shelf',
+    layout: 'stream',
+    color: '#4CAF50',
+    icon: <List size={24} color="#4CAF50" />,
+  },
+  {
+    name: 'Mood Board',
+    description: 'Visual collage for inspiration.',
+    type: 'Canvas',
+    layout: 'freeform',
+    color: '#9C27B0',
+    icon: <Grid size={24} color="#9C27B0" />,
+  },
+  {
+    name: 'Kanban Board',
+    description: 'Organize tasks in columns.',
+    type: 'Wall',
+    layout: 'grid',
+    color: '#607D8B',
+    icon: <Grid size={24} color="#607D8B" />,
+  },
+  {
+    name: 'Map Board',
+    description: 'Pin ideas or events geographically.',
+    type: 'Map',
+    layout: 'map',
+    color: '#00BCD4',
+    icon: <Grid size={24} color="#00BCD4" />,
+  },
+  {
+    name: 'Q&A Shelf',
+    description: 'Collect questions and answers.',
+    type: 'Shelf',
+    layout: 'stream',
+    color: '#F44336',
+    icon: <List size={24} color="#F44336" />,
+  },
+  {
+    name: 'Gallery',
+    description: 'Showcase images or artwork.',
+    type: 'Canvas',
+    layout: 'freeform',
+    color: '#FFC107',
+    icon: <Grid size={24} color="#FFC107" />,
+  },
+  {
+    name: 'Voting Wall',
+    description: 'Vote on ideas or proposals.',
+    type: 'Wall',
+    layout: 'grid',
+    color: '#8BC34A',
+    icon: <Grid size={24} color="#8BC34A" />,
+  },
+  {
+    name: 'Story Timeline',
+    description: 'Visualize stories or user journeys.',
+    type: 'Timeline',
+    layout: 'timeline',
+    color: '#E91E63',
+    icon: <List size={24} color="#E91E63" />,
+  },
+];
+
 const CARD_MARGIN = 12;
 const CARD_WIDTH = (width - (CARD_MARGIN * 3)) / 2;
 
-const categories = ['All', 'General', 'Education', 'Business', 'Art', 'Design', 'Technology'];
+const categories = ['General', 'Education', 'Business', 'Art', 'Design', 'Technology'];
 
 // Gallery Item Component
 const GalleryItem = ({ item, colors, viewMode = 'grid', onShare }) => {
@@ -32,7 +116,7 @@ const GalleryItem = ({ item, colors, viewMode = 'grid', onShare }) => {
       style={[
         styles.galleryItem, 
         isList ? styles.listItem : styles.gridItem,
-        { backgroundColor: colors.cardBackground }
+        { backgroundColor: colors.background }
       ]}
       activeOpacity={0.8}
       onPress={() => console.log('Open gallery item:', item.id)}
@@ -101,6 +185,37 @@ const GalleryItem = ({ item, colors, viewMode = 'grid', onShare }) => {
   );
 };
 
+import { useRouter } from 'expo-router';
+
+function TemplateCard({ template }) {
+  const router = useRouter();
+  return (
+    <TouchableOpacity
+      style={[styles.templateCard, { borderColor: template.color }]}
+      activeOpacity={0.85}
+      onPress={() => {
+        router.push({
+          pathname: '/template-details',
+          params: {
+            name: template.name,
+            description: template.description,
+            type: template.type,
+            layout: template.layout,
+            color: template.color
+          },
+        });
+      }}
+    >
+      <View style={[styles.iconCircle, { backgroundColor: template.color + '22' }]}> 
+        {template.icon}
+      </View>
+      <Text style={styles.templateName}>{template.name}</Text>
+      <Text style={styles.templateType}>{template.type}</Text>
+      <Text style={styles.templateDesc}>{template.description}</Text>
+    </TouchableOpacity>
+  );
+}
+
 export default function ExploreScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -154,6 +269,12 @@ export default function ExploreScreen() {
     isPublic: board.isPublic
   }));
 
+  // Combine templates and boards for the gallery grid
+  const galleryWithTemplates = [
+    ...BOARD_TEMPLATES.map(t => ({ ...t, __type: 'template' })),
+    ...galleryItems.map(b => ({ ...b, __type: 'board' }))
+  ];
+
   // Handle sharing a board
   const handleShareBoard = async (board) => {
     try {
@@ -202,10 +323,9 @@ export default function ExploreScreen() {
     );
   };
 
-
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+
       {/* Header with title and view toggle */}
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
@@ -281,27 +401,31 @@ export default function ExploreScreen() {
         />
       </View>
 
-      {/* Gallery Grid/List */}
-      {galleryItems.length === 0 ? (
+      {/* Gallery Grid/List with Board Templates included */}
+      {galleryWithTemplates.length === 0 ? (
         <EmptyState 
           title="No galleries found"
           message={
             searchQuery 
               ? "Try a different search term or category" 
-              : "There are no public galleries available yet"
+              : "There are no public galleries or templates available yet"
           }
         />
       ) : (
         <FlatList
-          data={galleryItems}
-          keyExtractor={(item) => item.id}
+          data={galleryWithTemplates}
+          keyExtractor={(item) => item.__type === 'template' ? `template-${item.name}` : `board-${item.id}`}
           renderItem={({ item }) => (
-            <GalleryItem 
-              item={item} 
-              colors={colors} 
-              viewMode={viewMode}
-              onShare={handleShareBoard}
-            />
+            item.__type === 'template' ? (
+              <TemplateCard template={item} />
+            ) : (
+              <GalleryItem 
+                item={item} 
+                colors={colors} 
+                viewMode={viewMode}
+                onShare={handleShareBoard}
+              />
+            )
           )}
           numColumns={viewMode === 'grid' ? 2 : 1}
           contentContainerStyle={styles.galleryContainer}
@@ -314,6 +438,120 @@ export default function ExploreScreen() {
 }
 
 const styles = StyleSheet.create({
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    marginLeft: 8,
+    letterSpacing: 0.5,
+  },
+  grid: {
+    paddingBottom: 32,
+    gap: 8,
+  },
+  templateCard: {
+    flex: 1,
+    margin: 8,
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    borderWidth: 2,
+    alignItems: 'center',
+    padding: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+  },
+  iconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  templateName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 2,
+    textAlign: 'center',
+  },
+  templateType: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#888',
+    marginBottom: 6,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    textAlign: 'center',
+  },
+  templateDesc: {
+    fontSize: 13,
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  container: {
+    flex: 1,
+    paddingTop: 24,
+    paddingHorizontal: 8,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    marginLeft: 8,
+    letterSpacing: 0.5,
+  },
+  grid: {
+    paddingBottom: 32,
+    gap: 8,
+  },
+  templateCard: {
+    flex: 1,
+    margin: 8,
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    borderWidth: 2,
+    alignItems: 'center',
+    padding: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+  },
+  iconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  templateName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 2,
+    textAlign: 'center',
+  },
+  templateType: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#888',
+    marginBottom: 6,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    textAlign: 'center',
+  },
+  templateDesc: {
+    fontSize: 13,
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  
   container: {
     flex: 1,
   },

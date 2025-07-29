@@ -54,6 +54,7 @@ function RootLayoutNav() {
       <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/signup" options={{ headerShown: false }} />
       <Stack.Screen name="security" options={{ headerShown: false }} />
+      {/* <Stack.Screen name="(template-details)" options={{ headerShown: false }} /> */}
       <Stack.Screen
         name="boards/[id]"
         options={{

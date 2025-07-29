@@ -29,7 +29,7 @@ export default function About() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: COLORS.background }]}>
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -63,10 +63,10 @@ export default function About() {
               }
             ]}
           >
-            <Globe size={20} color={colors.orange} />
+            <Globe size={20} color={colors.orange} style={{ marginRight: 10}} />
             <View style={styles.websiteLinkContainer}>
-            <Text style={[styles.websiteLinkText, { color: colors.textPrimary }]}>Visit Our Website</Text>
-            <Text style={[styles.websiteLinkText, { color: colors.textSecondary }]}>www.ideohub.com</Text>
+              <Text style={[styles.websiteLinkText, { color: colors.textPrimary }]}>Visit Our Website</Text>
+              <Text style={[styles.websiteLinkText, { color: colors.textSecondary }]}>www.ideohub.com</Text>
             </View>
           </Pressable>
         </View>
@@ -99,6 +99,7 @@ export default function About() {
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             Legal
           </Text>
+         
           <Pressable 
             style={({ pressed }) => [
               styles.linkItem, 
@@ -108,14 +109,14 @@ export default function About() {
                 borderColor: colors.border
               }
             ]}
-            onPress={() => router.push('/privacy-policy')}
+            onPress={() => router.push('helpscreen/privacy-policy')}
           >
             <Shield size={20} color={colors.orange} />
-            <View style={styles.linkTextContainer}>
+            <View>
             <Text style={[styles.linkText, { color: colors.textPrimary }]}>Privacy Policy</Text>
-            <Text style={[styles.linkText, { color: colors.textSecondary }]}></Text>
-            <ArrowUpRight size={18} color={colors.textSecondary} />
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Here's how we protect your data</Text>
             </View>
+            <ArrowUpRight size={18} color={colors.textSecondary} />
           </Pressable>
           <Pressable 
             style={({ pressed }) => [
@@ -126,10 +127,13 @@ export default function About() {
                 borderColor: colors.border
               }
             ]}
-            onPress={() => router.push('/terms')}
+            onPress={() => router.push('helpscreen/terms')}
           >
             <FileText size={20} color={colors.orange} />
+            <View>
             <Text style={[styles.linkText, { color: colors.textPrimary }]}>Terms of Service</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Important Info About Using Our Services</Text>
+            </View>
             <ArrowUpRight size={18} color={colors.textSecondary} />
           </Pressable>
         </View>
@@ -339,7 +343,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     marginTop: 12,
-    justifyContent: 'space-between',
+    justifyContent: '',
   },
   websiteLinkText: {
     fontSize: 16,

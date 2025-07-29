@@ -106,12 +106,12 @@ export default function ContactScreen() {
             onPress={openMaps}
           >
             <View style={[styles.iconContainer, { backgroundColor: colors.primary + '20' }]}>
-              <MapPin size={20} color={colors.primary} />
+              <MapPin size={20} color={colors.orange} />
             </View>
             <View style={styles.contactTextContainer}>
               <Text style={[styles.contactLabel, { color: colors.textSecondary }]}>Visit Us</Text>
               <Text style={[styles.contactValue, { color: colors.textPrimary }]}>
-                Computer Science Department, KNUST, Kumasi, Ghana
+                Computer Science Society, KNUST, Kumasi, Ghana
               </Text>
             </View>
             <ArrowUpRight size={18} color={colors.textSecondary} />
@@ -122,7 +122,7 @@ export default function ContactScreen() {
             onPress={openPhone}
           >
             <View style={[styles.iconContainer, { backgroundColor: colors.primary + '20' }]}>
-              <Phone size={20} color={colors.primary} />
+              <Phone size={20} color={colors.orange} />
             </View>
             <View style={styles.contactTextContainer}>
               <Text style={[styles.contactLabel, { color: colors.textSecondary }]}>Call Us</Text>
@@ -138,7 +138,7 @@ export default function ContactScreen() {
             onPress={openEmail}
           >
             <View style={[styles.iconContainer, { backgroundColor: colors.primary + '20' }]}>
-              <Mail size={20} color={colors.primary} />
+              <Mail size={20} color={colors.orange} />
             </View>
             <View style={styles.contactTextContainer}>
               <Text style={[styles.contactLabel, { color: colors.textSecondary }]}>Email Us</Text>
@@ -151,7 +151,7 @@ export default function ContactScreen() {
 
           <View style={[styles.contactCard, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}>
             <View style={[styles.iconContainer, { backgroundColor: colors.primary + '20' }]}>
-              <Clock size={20} color={colors.primary} />
+              <Clock size={20} color={colors.orange} />
             </View>
             <View style={styles.contactTextContainer}>
               <Text style={[styles.contactLabel, { color: colors.textSecondary }]}>Working Hours</Text>
