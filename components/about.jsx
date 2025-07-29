@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Linking, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Linking, Pressable, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUserStore } from '../store/userstore';
 import { useColorScheme } from 'react-native';
 import { ArrowUpRight, Users, Code, Shield, Star, FileText, Globe } from 'lucide-react-native';
+import COLORS from '../constants/colors';
 
 const APP_VERSION = '1.0.0';
 
@@ -15,10 +16,41 @@ export default function About() {
   const colors = useMemo(() => useUserStore.getState().getThemeColors(colorScheme), [colorScheme]);
 
   const teamMembers = [
-    { name: 'Adoma Samuella Yeboah', role: 'Founder & CEO' },
-    { name: 'Nuhu Haruna', role: 'Lead Developer' },
-    { name: 'Dinko Ntewini Michael', role: 'UI/UX Designer' },
-    { name: 'Leonard Odum Baidoo', role: 'Community Manager' },
+    { 
+      name: 'Adoma Samuella Yeboah', 
+      role: 'Founder & CEO',
+      avatar: require('../assets/images/Sam.jpg')
+    },
+    { 
+      name: 'Nuhu Haruna', 
+      role: 'Lead Developer',
+      avatar: require('../assets/images/IdeoHubicon.png')
+    },
+    { 
+      name: 'Dinko Ntewini Michael', 
+      role: 'UI/UX Designer',
+      avatar: require('../assets/images/Dinko1.jpg')
+    },
+    { 
+      name: ' Baidoo Leonard Odum', 
+      role: 'Community Manager',
+      avatar: require('../assets/images/IdeoHubnew.png')
+    },
+    { 
+      name: 'Asare Emmanuel Kwadwo', 
+      role: 'Product Manager',
+      avatar: require('../assets/images/IdeoHubicon.png')
+    },
+    { 
+      name: 'Lawson Kadmiel Lartey', 
+      role: 'Backend Engineer',
+      avatar: require('../assets/images/IdeoHublogo.png')
+    },
+    { 
+      name: 'Yankey Samuel Elimah', 
+      role: 'Marketing Director',
+      avatar: require('../assets/images/IdeoHubnew.png')
+    }
   ];
 
   const openExternalLink = async (url) => {
@@ -29,14 +61,14 @@ export default function About() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: COLORS.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
         <View style={styles.header}>
           <View style={[styles.logoContainer, { backgroundColor: colors.cardBackground }]}>
-            <Text style={[styles.logoText, { color: colors.orange }]}>ID</Text>
+            <Text style={[styles.logoText, { color: COLORS.orange }]}>ID</Text>
           </View>
           <Text style={[styles.appName, { color: colors.textPrimary }]}>IdeoHub</Text>
           <Text style={[styles.version, { color: colors.textSecondary }]}>Version {APP_VERSION}</Text>
@@ -63,7 +95,7 @@ export default function About() {
               }
             ]}
           >
-            <Globe size={20} color={colors.orange} style={{ marginRight: 10}} />
+            <Globe size={20} color={COLORS.orange} style={{ marginRight: 10}} />
             <View style={styles.websiteLinkContainer}>
               <Text style={[styles.websiteLinkText, { color: colors.textPrimary }]}>Visit Our Website</Text>
               <Text style={[styles.websiteLinkText, { color: colors.textSecondary }]}>www.ideohub.com</Text>
@@ -74,21 +106,21 @@ export default function About() {
         <View style={styles.section}>
           <View style={[styles.infoCard, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}>
             <View style={styles.infoItem}>
-              <Users size={20} color={colors.orange} />
+              <Users size={20} color={COLORS.orange} />
               <Text style={[styles.infoText, { color: colors.textPrimary }]}>
                 <Text style={{ fontWeight: '600' }}>10,000+</Text> Active Users
               </Text>
             </View>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <View style={styles.infoItem}>
-              <Code size={20} color={colors.orange} />
+              <Code size={20} color={COLORS.orange} />
               <Text style={[styles.infoText, { color: colors.textPrimary }]}>
                 <Text style={{ fontWeight: '600' }}>1,500+</Text> Projects Created
               </Text>
             </View>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <View style={styles.infoItem}>
-              <Star size={20} color={colors.orange} />
+              <Star size={20} color={COLORS.orange} />
               <Text style={[styles.infoText, { color: colors.textPrimary }]}>
                 <Text style={{ fontWeight: '600' }}>4.9</Text> Average Rating
               </Text>
@@ -102,37 +134,37 @@ export default function About() {
          
           <Pressable 
             style={({ pressed }) => [
-              styles.linkItem, 
+              styles.websiteLink, 
               { 
                 backgroundColor: colors.cardBackground,
-                opacity: pressed ? 0.8 : 1,
-                borderColor: colors.border
+                borderColor: colors.border,
+                opacity: pressed ? 0.8 : 1
               }
             ]}
             onPress={() => router.push('helpscreen/privacy-policy')}
           >
-            <Shield size={20} color={colors.orange} />
-            <View>
-            <Text style={[styles.linkText, { color: colors.textPrimary }]}>Privacy Policy</Text>
-            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Here's how we protect your data</Text>
+            <Shield size={20} color={COLORS.orange} style={{ marginRight: 10}} />
+            <View style={styles.websiteLinkContainer}>
+              <Text style={[styles.websiteLinkText, { color: colors.textPrimary }]}>Privacy Policy</Text>
+              <Text style={[styles.websiteLinkText, { color: colors.textSecondary }]}>Here's how we protect your data</Text>
             </View>
             <ArrowUpRight size={18} color={colors.textSecondary} />
           </Pressable>
           <Pressable 
             style={({ pressed }) => [
-              styles.linkItem, 
+              styles.websiteLink, 
               { 
                 backgroundColor: colors.cardBackground,
-                opacity: pressed ? 0.8 : 1,
-                borderColor: colors.border
+                borderColor: colors.border,
+                opacity: pressed ? 0.8 : 1
               }
             ]}
             onPress={() => router.push('helpscreen/terms')}
           >
-            <FileText size={20} color={colors.orange} />
-            <View>
-            <Text style={[styles.linkText, { color: colors.textPrimary }]}>Terms of Service</Text>
-            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Important Info About Using Our Services</Text>
+            <FileText size={20} color={COLORS.orange} style={{ marginRight: 10}} />
+            <View style={styles.websiteLinkContainer}>
+              <Text style={[styles.websiteLinkText, { color: colors.textPrimary }]}>Terms of Service</Text>
+              <Text style={[styles.websiteLinkText, { color: colors.textSecondary }]}>Important Info About Using Our Services</Text>
             </View>
             <ArrowUpRight size={18} color={colors.textSecondary} />
           </Pressable>
@@ -148,10 +180,20 @@ export default function About() {
                 key={index} 
                 style={[styles.teamMember, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}
               >
-                <View style={[styles.avatar, { backgroundColor: 'rgba(244, 163, 0, 0.1)' }]}>
-                  <Text style={[styles.avatarText, { color: colors.orange }]}>
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </Text>
+                <View style={styles.avatar}>
+                  {member.avatar ? (
+                    <Image 
+                      source={member.avatar} 
+                      style={styles.avatarImage}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View style={[styles.avatarPlaceholder, { backgroundColor: 'rgba(244, 163, 0, 0.1)' }]}>
+                      <Text style={[styles.avatarText, { color: COLORS.orange }]}>
+                        {member.name.split(' ').map(n => n[0]).join('')}
+                      </Text>
+                    </View>
+                  )}
                 </View>
                 <Text style={[styles.memberName, { color: colors.textPrimary }]}>{member.name}</Text>
                 <Text style={[styles.memberRole, { color: colors.textSecondary }]}>{member.role}</Text>
@@ -174,7 +216,7 @@ export default function About() {
               ]}
               onPress={() => openExternalLink('https://twitter.com/ideohub')}
             >
-              <Text style={{ color: colors.orange }}>𝕏</Text>
+              <Text style={{ color: COLORS.orange }}>𝕏</Text>
             </Pressable>
             <Pressable 
               style={({ pressed }) => [
@@ -183,7 +225,7 @@ export default function About() {
               ]}
               onPress={() => openExternalLink('https://instagram.com/ideohub')}
             >
-              <Text style={{ color: colors.orange }}>📸</Text>
+              <Text style={{ color: COLORS.orange }}>📸</Text>
             </Pressable>
             <Pressable 
               style={({ pressed }) => [
@@ -192,7 +234,7 @@ export default function About() {
               ]}
               onPress={() => openExternalLink('https://github.com/ideohub')}
             >
-              <Text style={{ color: colors.orange }}>🐙</Text>
+              <Text style={{ color: COLORS.orange }}>🐙</Text>
             </Pressable>
           </View>
         </View>
@@ -279,18 +321,32 @@ const styles = StyleSheet.create({
   teamMember: {
     width: '47%',
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
     margin: 6,
     alignItems: 'center',
     borderWidth: 1,
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
+    overflow: 'hidden',
+  },
+
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  avatarPlaceholder: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   avatarText: {
     fontSize: 20,
@@ -298,12 +354,12 @@ const styles = StyleSheet.create({
   },
   memberName: {
     fontWeight: '600',
-    fontSize: 15,
-    marginBottom: 4,
+    fontSize: 16,
+    marginBottom: 6,
     textAlign: 'center',
   },
   memberRole: {
-    fontSize: 13,
+    fontSize: 14,
     opacity: 0.8,
     textAlign: 'center',
   },
@@ -343,7 +399,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     marginTop: 12,
-    justifyContent: '',
+    justifyContent: 'space-between',
+  },
+  websiteLinkContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
   websiteLinkText: {
     fontSize: 16,
