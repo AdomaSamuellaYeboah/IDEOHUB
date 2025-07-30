@@ -5,19 +5,19 @@ import {
   View,
   TextInput,
   Pressable,
-  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert
+  useColorScheme,
+  Alert,
 } from "react-native";
 import { useRouter, Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useUserStore } from "../../store/userstore";
 import COLORS from "../../constants/colors";
-import { useColorScheme } from "react-native";
 import API from "../../store/api";
 import axios from "axios";
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -26,52 +26,65 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-  const { setUser,getThemeColors } = useUserStore();
+  const { setUser, getThemeColors } = useUserStore();
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
 
   const handleLogin = async () => {
+    setIsLoading(true);
+    setError("");
+
+    // Validate inputs
+    if (!email.trim() || !password.trim()) {
+      setError("All fields are required");
+      setIsLoading(false);
+      return;
+    }
+
+    //validate password length
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
+      setIsLoading(false);
+      return;
+    }
+
+    //validate email with email regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Invalid email format");
+      setIsLoading(false);
+      return;
+    }
+
+    //user data to be passed to the api for signup at
+    const mockUser = {
+      email: email.trim(),
+      password: password.trim(),
+    };
+
     try {
-      // Simple frontend validation
-      if (!email.trim()) {
-        setError("Email is required");
-        return;
+      const response = await axios.post(`${API}/login`, mockUser);
+      if (response.data.status) {
+        setUser(response.data.data, true, response.data.data.jwt);
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Logged in successfully!",
+        });
+        setTimeout(() => {
+          router.replace("/(tabs)");
+        }, 1000);
       }
-
-      if (!password.trim()) {
-        setError("Password is required");
-        return;
-      }
-
-      // Clear any previous errors
-      setError("");
-      
-      // Set loading state
-      setIsLoading(true);
-      
-      // Set user as authenticated
-      // For demo purposes, we're using a dummy user object
-      const dummyUser = {
-        id: 'demo-user',
-        email: email,
-        name: email.split('@')[0], // Use the part before @ as the username
-        // Add any other user properties you need
-      };
-      
-      // Update the user store with the authenticated user
-      setUser(dummyUser, true, 'dummy-jwt-token');
-      
-      // Navigate to main app
-      router.replace('/(tabs)');
-      
     } catch (error) {
-      setError(error.message || 'An error occurred during login');
+      if (error.response && error.response.data) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to log in. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
-
-  
 
   return (
     <KeyboardAvoidingView
@@ -90,19 +103,28 @@ export default function LoginScreen() {
             {/* logo */}
             <Text style={styles.logoText}>ID</Text>
           </LinearGradient>
-          <Text style={[styles.appName, { color: colors.textPrimary }]}>IdeoHub</Text>
-          <Text style={[styles.tagline, { color: colors.textSecondary }]}>Collaborate, Create, Connect</Text>
+          <Text style={[styles.appName, { color: colors.textPrimary }]}>
+            IdeoHub
+          </Text>
+          <Text style={[styles.tagline, { color: colors.textSecondary }]}>
+            Collaborate, Create, Connect
+          </Text>
         </View>
         <View style={styles.formContainer}>
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          <Text style={[styles.label, { color: colors.textPrimary }]}>Email</Text>
+          <Text style={[styles.label, { color: colors.textPrimary }]}>
+            Email
+          </Text>
           <TextInput
-            style={[styles.input, { 
-              backgroundColor: colors.cardBackground, 
-              borderColor: colors.border,
-              color: colors.textPrimary 
-            }]}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.cardBackground,
+                borderColor: colors.border,
+                color: colors.textPrimary,
+              },
+            ]}
             value={email}
             onChangeText={setEmail}
             placeholder="Enter your email"
@@ -111,13 +133,18 @@ export default function LoginScreen() {
             autoCapitalize="none"
           />
 
-          <Text style={[styles.label, { color: colors.textPrimary }]}>Password</Text>
+          <Text style={[styles.label, { color: colors.textPrimary }]}>
+            Password
+          </Text>
           <TextInput
-            style={[styles.input, { 
-              backgroundColor: colors.cardBackground, 
-              borderColor: colors.border,
-              color: colors.textPrimary 
-            }]}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.cardBackground,
+                borderColor: colors.border,
+                color: colors.textPrimary,
+              },
+            ]}
             value={password}
             onChangeText={setPassword}
             placeholder="Enter your password"
@@ -136,7 +163,9 @@ export default function LoginScreen() {
           </Pressable>
 
           <View style={styles.footer}>
-            <Text style={[styles.footerText, { color: colors.textSecondary }]}>Don't have an account? </Text>
+            <Text style={[styles.footerText, { color: colors.textSecondary }]}>
+              Don{"'"}t have an account?{" "}
+            </Text>
             <Link href="/signup" asChild>
               <Pressable>
                 <Text style={styles.footerLink}>Sign Up</Text>

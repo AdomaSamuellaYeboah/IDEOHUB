@@ -9,7 +9,8 @@ import {
   ScrollView,
   Switch,
   TouchableOpacity,
-  Image
+  Image,
+  useColorScheme,
 } from "react-native";
 import {
   X,
@@ -21,8 +22,7 @@ import {
 } from "lucide-react-native";
 import COLORS from "../constants/colors";
 import { useUserStore } from "../store/userstore";
-import { useColorScheme } from "react-native";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 
 const layoutOptions = [
   {
@@ -85,7 +85,7 @@ export default function CreateBoardModal({ visible, onClose, onCreate }) {
       isPublic,
       coverImage: image,
     };
-    if (typeof onCreate === 'function') {
+    if (typeof onCreate === "function") {
       onCreate(newBoard);
     }
 
@@ -96,8 +96,7 @@ export default function CreateBoardModal({ visible, onClose, onCreate }) {
     setLayout("grid");
     setIsPublic(true);
 
-
-    if (typeof onClose === 'function') {
+    if (typeof onClose === "function") {
       onClose();
     }
   };
@@ -118,17 +117,23 @@ export default function CreateBoardModal({ visible, onClose, onCreate }) {
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalContainer}>
-        <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
+        <View
+          style={[styles.modalContent, { backgroundColor: colors.background }]}
+        >
           <View style={[styles.header, { borderBottomColor: colors.border }]}>
-            <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Create New Board</Text>
+            <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+              Create New Board
+            </Text>
             <Pressable onPress={handleClose} style={styles.closeButton}>
               <X size={24} color={colors.textSecondary} />
             </Pressable>
           </View>
 
           <ScrollView style={styles.form}>
-          <Text style={[styles.label, { color: colors.textPrimary }]}>Image Of The Board</Text>
-          <View style={styles.addImage}>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>
+              Image Of The Board
+            </Text>
+            <View style={styles.addImage}>
               <TouchableOpacity onPress={pickImage}>
                 {image ? (
                   <Image
@@ -140,18 +145,37 @@ export default function CreateBoardModal({ visible, onClose, onCreate }) {
                 )}
               </TouchableOpacity>
             </View>
-            <Text style={[styles.label, { color: colors.textPrimary }]}>Board Title</Text>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>
+              Board Title
+            </Text>
             <TextInput
-              style={[styles.input, { backgroundColor: colors.cardBackground, borderColor: colors.border, color: colors.textPrimary }]}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.cardBackground,
+                  borderColor: colors.border,
+                  color: colors.textPrimary,
+                },
+              ]}
               value={title}
               onChangeText={setTitle}
               placeholder="Enter board title"
               placeholderTextColor={colors.textSecondary}
             />
 
-            <Text style={[styles.label, { color: colors.textPrimary }]}>Description (Optional)</Text>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>
+              Description (Optional)
+            </Text>
             <TextInput
-              style={[styles.input, styles.textArea, { backgroundColor: colors.cardBackground, borderColor: colors.border, color: colors.textPrimary }]}
+              style={[
+                styles.input,
+                styles.textArea,
+                {
+                  backgroundColor: colors.cardBackground,
+                  borderColor: colors.border,
+                  color: colors.textPrimary,
+                },
+              ]}
               value={description}
               onChangeText={setDescription}
               placeholder="Enter board description"
@@ -159,11 +183,10 @@ export default function CreateBoardModal({ visible, onClose, onCreate }) {
               multiline
               numberOfLines={3}
             />
-           
 
-
-
-            <Text style={[styles.label, { color: colors.textPrimary }]}>Layout</Text>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>
+              Layout
+            </Text>
             <View style={styles.layoutOptions}>
               {layoutOptions.map((option) => (
                 <Pressable
@@ -171,13 +194,28 @@ export default function CreateBoardModal({ visible, onClose, onCreate }) {
                   style={[
                     styles.layoutOption,
                     { borderColor: colors.border },
-                    layout === option.value && [styles.layoutOptionSelected, { borderColor: COLORS.lightBlue, backgroundColor: "rgba(62, 156, 255, 0.1)" }],
+                    layout === option.value && [
+                      styles.layoutOptionSelected,
+                      {
+                        borderColor: COLORS.lightBlue,
+                        backgroundColor: "rgba(62, 156, 255, 0.1)",
+                      },
+                    ],
                   ]}
                   onPress={() => setLayout(option.value)}
                 >
                   <View style={styles.layoutIconContainer}>{option.icon}</View>
-                  <Text style={[styles.layoutLabel, { color: colors.textPrimary }]}>{option.label}</Text>
-                  <Text style={[styles.layoutDescription, { color: colors.textSecondary }]}>
+                  <Text
+                    style={[styles.layoutLabel, { color: colors.textPrimary }]}
+                  >
+                    {option.label}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.layoutDescription,
+                      { color: colors.textSecondary },
+                    ]}
+                  >
                     {option.description}
                   </Text>
                 </Pressable>
@@ -185,7 +223,9 @@ export default function CreateBoardModal({ visible, onClose, onCreate }) {
             </View>
 
             <View style={styles.switchContainer}>
-              <Text style={[styles.label, { color: colors.textPrimary }]}>Public Board</Text>
+              <Text style={[styles.label, { color: colors.textPrimary }]}>
+                Public Board
+              </Text>
               <Switch
                 value={isPublic}
                 onValueChange={setIsPublic}
@@ -202,10 +242,21 @@ export default function CreateBoardModal({ visible, onClose, onCreate }) {
 
           <View style={[styles.footer, { borderTopColor: colors.border }]}>
             <Pressable
-              style={[styles.button, styles.cancelButton, { backgroundColor: colors.cardBackground, borderColor: colors.border }]}
+              style={[
+                styles.button,
+                styles.cancelButton,
+                {
+                  backgroundColor: colors.cardBackground,
+                  borderColor: colors.border,
+                },
+              ]}
               onPress={handleClose}
             >
-              <Text style={[styles.cancelButtonText, { color: colors.textPrimary }]}>Cancel</Text>
+              <Text
+                style={[styles.cancelButtonText, { color: colors.textPrimary }]}
+              >
+                Cancel
+              </Text>
             </Pressable>
             <Pressable
               style={[
@@ -340,12 +391,12 @@ const styles = StyleSheet.create({
   addImage: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: "center",
     height: 90,
     padding: 12,
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 8,
     color: COLORS.textPrimary,
-  }
+  },
 });

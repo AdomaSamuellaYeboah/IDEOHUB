@@ -17,6 +17,7 @@
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
     "axios": "^1.10.0",
+    "dayjs": "^1.11.13",
     "expo": "^53.0.20",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.6",
@@ -42,9 +43,11 @@
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-status-bar-height": "^2.6.0",
+    "react-native-toast-message": "^2.3.3",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "zustand": "^5.0.6"
+    "zustand": "^5.0.6",
+    "expo-dev-client": "~5.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

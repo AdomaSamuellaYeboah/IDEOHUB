@@ -10,87 +10,87 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  useColorScheme,
+  Dimensions,
 } from "react-native";
 import COLORS from "../../constants/colors";
 import { Brain } from "lucide-react-native";
 import { useUserStore } from "../../store/userstore";
-import { useColorScheme } from "react-native";
+import { useChatStore } from "../../store/chatstore";
+import Toast from "react-native-toast-message";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const ChatScreen = () => {
-  const [messages, setMessages] = useState([]);
+  const {
+    fetchMessages,
+    isLoading,
+    messages,
+    addMessage,
+    error,
+    reLoadMessages,
+    sendRequest,
+  } = useChatStore();
+  const { jwt, getThemeColors } = useUserStore();
+
   const [inputText, setInputText] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
-  const [haveChat, setHaveChat] = useState(false);
   const flatListRef = useRef(null);
-  
-  const { getThemeColors } = useUserStore();
+  const [refreshing, setRefreshing] = useState(false);
+
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
 
-  // Simulate loading messages from an API
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMessages([
-        {
-          id: "1",
-          text: "Hey there! How are you doing?",
-          sender: "other",
-          time: "12:30 PM",
-          avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        },
-        {
-          id: "2",
-          text: "I'm good, thanks! How about you?",
-          sender: "me",
-          time: "12:32 PM",
-          avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        },
-        {
-          id: "3",
-          text: "Doing well! Just working on some React Native projects.",
-          sender: "other",
-          time: "12:33 PM",
-          avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        },
-      ]);
-      setIsLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
+    fetchMessages(jwt);
   }, []);
 
-  const handleSend = () => {
-    if (inputText.trim() === "") return;
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error,
+      });
+    }
+  }, [error]);
+
+  const handleSend = async () => {
+    if (!inputText.trim()) return;
 
     setIsSending(true);
 
-    // Simulate network delay
-    setTimeout(() => {
-      const newMessage = {
-        id: Date.now().toString(),
-        text: inputText,
-        sender: "me",
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      };
+    const newMessage = {
+      id: Date.now().toString(),
+      message: inputText,
+      sender: "user",
+      time: new Date().toISOString(),
+    };
 
-      setMessages((prev) => [...prev, newMessage]);
-      setInputText("");
-      setIsSending(false);
+    addMessage(newMessage);
+    sendRequest(inputText, jwt);
 
-      // Scroll to bottom after sending
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    }, 500);
+    setInputText("");
+
+    setIsSending(false);
+    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+  };
+
+  const handleRefresh = async () => {
+    try {
+      setRefreshing(true);
+      await reLoadMessages(jwt);
+    } catch (err) {
+      console.error("Refresh failed:", err);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const renderMessage = ({ item }) => {
-    const isMe = item.sender === "me";
+    const isMe = item.sender === "user";
 
     return (
       <View
@@ -99,24 +99,43 @@ const ChatScreen = () => {
           isMe ? styles.myMessageContainer : styles.otherMessageContainer,
         ]}
       >
-        {!isMe && <Brain style={[styles.headerAvatar, { color: colors.textPrimary }]} />}
+        {!isMe && (
+          <Brain style={[styles.headerAvatar, { color: colors.textPrimary }]} />
+        )}
         <View
           style={[
             styles.messageBubble,
-            isMe ? styles.myMessageBubble : [styles.otherMessageBubble, { backgroundColor: colors.cardBackground }],
+            isMe
+              ? styles.myMessageBubble
+              : [
+                  styles.otherMessageBubble,
+                  { backgroundColor: colors.cardBackground },
+                ],
           ]}
         >
-          {!isMe && <Text style={[styles.senderName, { color: colors.textPrimary }]}>Ideo</Text>}
-          <Text style={isMe ? styles.myMessageText : [styles.otherMessageText, { color: colors.textPrimary }]}>
-            {item.text}
+          {!isMe && (
+            <Text style={[styles.senderName, { color: colors.textPrimary }]}>
+              Ideo
+            </Text>
+          )}
+          <Text
+            style={
+              isMe
+                ? styles.myMessageText
+                : [styles.otherMessageText, { color: colors.textPrimary }]
+            }
+          >
+            {item?.message || item?.text}
           </Text>
           <Text
             style={[
               styles.timeText,
-              isMe ? styles.myTimeText : [styles.otherTimeText, { color: colors.textSecondary }],
+              isMe
+                ? styles.myTimeText
+                : [styles.otherTimeText, { color: colors.textSecondary }],
             ]}
           >
-            {item.time}
+            {dayjs(item?.time).fromNow() || "Just now"}
           </Text>
         </View>
       </View>
@@ -124,13 +143,27 @@ const ChatScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.cardBackground, borderBottomColor: colors.border }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: colors.cardBackground,
+            borderBottomColor: colors.border,
+          },
+        ]}
+      >
         <Brain style={[styles.headerAvatar, { color: colors.textPrimary }]} />
-        <Text style={[styles.headerName, { color: colors.textPrimary }]}>Ideo Chat</Text>
+        <Text style={[styles.headerName, { color: colors.textPrimary }]}>
+          Ideo Chat
+        </Text>
         <View style={styles.headerStatus}>
           <View style={styles.statusIndicator} />
-          <Text style={[styles.statusText, { color: colors.textSecondary }]}>Online</Text>
+          <Text style={[styles.statusText, { color: colors.textSecondary }]}>
+            Online
+          </Text>
         </View>
       </View>
 
@@ -140,16 +173,27 @@ const ChatScreen = () => {
         keyboardVerticalOffset={90}
       >
         {isLoading ? (
-          <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+          <View
+            style={[
+              styles.loadingContainer,
+              { backgroundColor: colors.background },
+            ]}
+          >
             <ActivityIndicator size="large" color={COLORS.orange} />
-            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading messages...</Text>
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+              Loading messages...
+            </Text>
           </View>
         ) : (
           <FlatList
             ref={flatListRef}
-            data={messages}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
             renderItem={renderMessage}
-            keyExtractor={(item) => item.id}
+            data={messages.filter(Boolean)} // remove any null/undefined
+            keyExtractor={(item, index) =>
+              item?.id?.toString?.() ?? index.toString()
+            }
             contentContainerStyle={styles.messagesList}
             onContentSizeChange={() =>
               flatListRef.current?.scrollToEnd({ animated: true })
@@ -157,12 +201,41 @@ const ChatScreen = () => {
             onLayout={() =>
               flatListRef.current?.scrollToEnd({ animated: true })
             }
+            ListEmptyComponent={
+              <View
+                style={{
+                  backgroundColor: colors.background,
+                  height: Dimensions.get("window").height / 1.5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Brain style={{ color: colors.textPrimary }} size={50} />
+                <Text
+                  style={[styles.loadingText, { color: colors.textSecondary }]}
+                >
+                  No Chats yet.
+                </Text>
+              </View>
+            }
           />
         )}
       </KeyboardAvoidingView>
-      <View style={[styles.inputContainer, { backgroundColor: colors.cardBackground, borderTopColor: colors.border }]}>
+
+      <View
+        style={[
+          styles.inputContainer,
+          {
+            backgroundColor: colors.cardBackground,
+            borderTopColor: colors.border,
+          },
+        ]}
+      >
         <TextInput
-          style={[styles.textInput, { backgroundColor: colors.background, color: colors.textPrimary }]}
+          style={[
+            styles.textInput,
+            { backgroundColor: colors.background, color: colors.textPrimary },
+          ]}
           value={inputText}
           onChangeText={setInputText}
           placeholder="Type a message..."
@@ -172,7 +245,7 @@ const ChatScreen = () => {
         <TouchableOpacity
           style={styles.sendButton}
           onPress={handleSend}
-          disabled={isSending}
+          disabled={isSending || !inputText.trim()}
         >
           {isSending ? (
             <ActivityIndicator size="small" color="white" />
@@ -186,33 +259,17 @@ const ChatScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 10,
-  },
+  container: { flex: 1 },
+  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+  loadingText: { marginTop: 10 },
   header: {
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
     borderBottomWidth: 1,
   },
-  headerAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  headerName: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+  headerAvatar: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
+  headerName: { fontWeight: "bold", fontSize: 16 },
   headerStatus: {
     flexDirection: "row",
     alignItems: "center",
@@ -225,67 +282,28 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
     marginRight: 5,
   },
-  statusText: {
-    fontSize: 12,
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  messagesList: {
-    padding: 15,
-  },
+  statusText: { fontSize: 12 },
+  keyboardAvoidingView: { flex: 1 },
+  messagesList: { padding: 15 },
   messageContainer: {
     flexDirection: "row",
     marginBottom: 15,
     alignItems: "flex-end",
   },
-  myMessageContainer: {
-    justifyContent: "flex-end",
-  },
-  otherMessageContainer: {
-    justifyContent: "flex-start",
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 8,
-  },
-  messageBubble: {
-    maxWidth: "70%",
-    padding: 12,
-    borderRadius: 16,
-  },
+  myMessageContainer: { justifyContent: "flex-end" },
+  otherMessageContainer: { justifyContent: "flex-start" },
+  messageBubble: { maxWidth: "70%", padding: 12, borderRadius: 16 },
   myMessageBubble: {
     backgroundColor: COLORS.orange,
     borderBottomRightRadius: 2,
   },
-  otherMessageBubble: {
-    borderBottomLeftRadius: 2,
-  },
-  myMessageText: {
-    color: "white",
-    fontSize: 16,
-  },
-  otherMessageText: {
-    fontSize: 16,
-  },
-  timeText: {
-    fontSize: 11,
-    marginTop: 5,
-  },
-  myTimeText: {
-    color: "#ffffffaa",
-    textAlign: "right",
-  },
-  otherTimeText: {
-    textAlign: "left",
-  },
-  senderName: {
-    fontWeight: "bold",
-    fontSize: 12,
-    marginBottom: 2,
-  },
+  otherMessageBubble: { borderBottomLeftRadius: 2 },
+  myMessageText: { color: "white", fontSize: 16 },
+  otherMessageText: { fontSize: 16 },
+  timeText: { fontSize: 11, marginTop: 5 },
+  myTimeText: { color: "#ffffffaa", textAlign: "right" },
+  otherTimeText: { textAlign: "left" },
+  senderName: { fontWeight: "bold", fontSize: 12, marginBottom: 2 },
   inputContainer: {
     flexDirection: "row",
     padding: 10,
@@ -310,10 +328,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  sendButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
+  sendButtonText: { color: "white", fontWeight: "bold" },
 });
 
 export default ChatScreen;

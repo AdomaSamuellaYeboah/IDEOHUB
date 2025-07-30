@@ -15,7 +15,8 @@
         "foregroundImage": "./assets/images/IdeoHublogo.png",
         "backgroundColor": "#000000"
       },
-      "edgeToEdgeEnabled": false
+      "edgeToEdgeEnabled": false,
+      "package": "com.akboafo.IdeoHub"
     },
     "web": {
       "bundler": "metro",
@@ -46,6 +47,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "687a60c1-6f92-4f71-94e2-a38b47664c1c"
+      }
     }
   }
 }

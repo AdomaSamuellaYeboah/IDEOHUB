@@ -1,49 +1,48 @@
-import React, { useState } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  TextInput, 
-  Pressable, 
-  KeyboardAvoidingView, 
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert
-} from 'react-native';
-import { useRouter, Link } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useUserStore } from '../../store/userstore';
-import COLORS from '../../constants/colors';
-import api from '../../store/api';
-import axios from 'axios';
-import { useColorScheme } from 'react-native';
-import { replace } from 'expo-router/build/global-state/routing';
+  useColorScheme,
+} from "react-native";
+import { useRouter, Link } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { useUserStore } from "../../store/userstore";
+import COLORS from "../../constants/colors";
+import api from "../../store/api";
+import axios from "axios";
+import Toast from "react-native-toast-message";
 
 export default function SignupScreen() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState("");
+
   const router = useRouter();
   const { setUser, getThemeColors } = useUserStore();
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
-  
+
   const handleSignup = async () => {
     setIsLoading(true);
-    setError('');
-    
+    setError("");
+
     // Validate inputs
-    if (!name.trim() || !email.trim() || !password.trim()) {
-      setError('All fields are required');
+    if (!email.trim() || !password.trim()) {
+      setError("All fields are required");
       setIsLoading(false);
       return;
     }
-    
+
+    //validate password length
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError("Password must be at least 8 characters");
       setIsLoading(false);
       return;
     }
@@ -51,29 +50,43 @@ export default function SignupScreen() {
     //validate email with email regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError('Invalid email format');
+      setError("Invalid email format");
       setIsLoading(false);
       return;
     }
-    
+
     //user data to be passed to the api for signup at
-    //http://localhost:3000/register
     const mockUser = {
       email: email.trim(),
-      password: password.trim()
+      password: password.trim(),
     };
 
     try {
-      const response = await axios.post(`${api}/register`,mockUser)
-      
+      const response = await axios.post(`${api}/register`, mockUser);
+
       if (response.data.status) {
-        Alert.alert(response.data.message)
-        setIsLoading(false);
-        router.replace('/(auth)/login')
+        const loginResponse = await axios.post(`${api}/login`, mockUser); //login in after the signup
+
+        //log the person in after the signup
+        if (loginResponse.data.status) {
+          setUser(response.data.data, true, response.data.data.jwt);
+          Toast.show({
+            type: "success",
+            text1: "Success",
+            text2: "Signed up successfully!",
+          });
+          setTimeout(() => {
+            router.replace("/(tabs)");
+          }, 1000);
+        }
       }
-        
     } catch (error) {
-      setError('Failed to create account. Please try again.');
+      if (error.response && error.response.data) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to create account. Please try again.");
+      }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -81,8 +94,8 @@ export default function SignupScreen() {
   return (
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.logoContainer}>
@@ -94,34 +107,29 @@ export default function SignupScreen() {
           >
             <Text style={styles.logoText}></Text>
           </LinearGradient>
-          <Text style={[styles.appName, { color: colors.textPrimary }]}>IdeoHub</Text>
-          <Text style={[styles.tagline, { color: colors.textSecondary }]}>Join the community</Text>
+          <Text style={[styles.appName, { color: colors.textPrimary }]}>
+            IdeoHub
+          </Text>
+          <Text style={[styles.tagline, { color: colors.textSecondary }]}>
+            Join the community
+          </Text>
         </View>
-        
+
         <View style={styles.formContainer}>
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
-          
-          <Text style={[styles.label, { color: colors.textPrimary }]}>Full Name</Text>
+
+          <Text style={[styles.label, { color: colors.textPrimary }]}>
+            Email
+          </Text>
           <TextInput
-            style={[styles.input, { 
-              backgroundColor: colors.cardBackground, 
-              borderColor: colors.border,
-              color: colors.textPrimary 
-            }]}
-            value={name}
-            onChangeText={setName}
-            placeholder="Enter your full name"
-            placeholderTextColor={colors.textSecondary}
-            autoCapitalize="words"
-          />
-          
-          <Text style={[styles.label, { color: colors.textPrimary }]}>Email</Text>
-          <TextInput
-            style={[styles.input, { 
-              backgroundColor: colors.cardBackground, 
-              borderColor: colors.border,
-              color: colors.textPrimary 
-            }]}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.cardBackground,
+                borderColor: colors.border,
+                color: colors.textPrimary,
+              },
+            ]}
             value={email}
             onChangeText={setEmail}
             placeholder="Enter your email"
@@ -129,33 +137,40 @@ export default function SignupScreen() {
             keyboardType="email-address"
             autoCapitalize="none"
           />
-          
-          <Text style={[styles.label, { color: colors.textPrimary }]}>Password</Text>
+
+          <Text style={[styles.label, { color: colors.textPrimary }]}>
+            Password
+          </Text>
           <TextInput
-            style={[styles.input, { 
-              backgroundColor: colors.cardBackground, 
-              borderColor: colors.border,
-              color: colors.textPrimary 
-            }]}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.cardBackground,
+                borderColor: colors.border,
+                color: colors.textPrimary,
+              },
+            ]}
             value={password}
             onChangeText={setPassword}
             placeholder="Create a password (min 8 characters)"
             placeholderTextColor={colors.textSecondary}
             secureTextEntry
           />
-          
-          <Pressable 
-            style={[styles.button, styles.signupButton]} 
+
+          <Pressable
+            style={[styles.button, styles.signupButton]}
             onPress={handleSignup}
             disabled={isLoading}
           >
             <Text style={styles.buttonText}>
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? "Creating Account..." : "Create Account"}
             </Text>
           </Pressable>
-          
+
           <View style={styles.footer}>
-            <Text style={[styles.footerText, { color: colors.textSecondary }]}>Already have an account? </Text>
+            <Text style={[styles.footerText, { color: colors.textSecondary }]}>
+              Already have an account?{" "}
+            </Text>
             <Link href="/login" asChild>
               <Pressable>
                 <Text style={styles.footerLink}>Log In</Text>
@@ -174,40 +189,40 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 24,
   },
   logoContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   logoBackground: {
     width: 80,
     height: 80,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16,
   },
   logoText: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   appName: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   tagline: {
     fontSize: 16,
   },
   formContainer: {
-    width: '100%',
+    width: "100%",
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   input: {
@@ -220,20 +235,20 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 14,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 12,
   },
   signupButton: {
     backgroundColor: COLORS.orange,
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 24,
   },
   footerText: {
@@ -242,11 +257,11 @@ const styles = StyleSheet.create({
   footerLink: {
     color: COLORS.orange,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   errorText: {
     color: COLORS.red,
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

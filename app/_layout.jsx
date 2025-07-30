@@ -3,10 +3,10 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { useColorScheme } from "react-native";
+import { useColorScheme, View, StyleSheet } from "react-native";
 import { useUserStore } from "../store/userstore";
-import { View, StyleSheet } from "react-native";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
+import Toast from "react-native-toast-message";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,16 +41,18 @@ export default function RootLayout() {
 
   return (
     <>
-      <ExpoStatusBar style={actualTheme === 'dark' ? 'light' : 'dark'} />
+      <ExpoStatusBar style={actualTheme === "dark" ? "light" : "dark"} />
       <RootLayoutNav />
+      <Toast />
     </>
   );
 }
 
 function RootLayoutNav() {
   return (
-    <Stack>
+    <Stack initialRouteName="index">
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/signup" options={{ headerShown: false }} />
       <Stack.Screen name="security" options={{ headerShown: false }} />
@@ -77,11 +79,11 @@ function RootLayoutNav() {
         }}
       />
       {/* Help & Support Group */}
-      <Stack.Screen 
-        name="helpscreen" 
-        options={{ 
-          headerShown: false 
-        }} 
+      <Stack.Screen
+        name="helpscreen"
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack>
   );

@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList, Pressable, BackHandler, ToastAndroid, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Pressable,
+  BackHandler,
+  ToastAndroid,
+  Alert,
+  useColorScheme,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { Plus } from "lucide-react-native";
 import { useBoardStore } from "../../store/boardstore";
@@ -9,27 +19,42 @@ import EmptyState from "../../components/emptystate";
 import CreateBoardModal from "../../components/createboardmodal";
 import EditBoardModal from "../../components/editboardmodal";
 import COLORS from "../../constants/colors";
-import { useColorScheme } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function BoardsScreen() {
-  const { boards, fetchBoards, createBoard, updateBoard, deleteBoard } = useBoardStore();
+  const {
+    boards,
+    fetchBoards,
+    updateBoard,
+    deleteBoard,
+    error,
+    isLoading,
+    createBoard,
+  } = useBoardStore();
   const [handleOpen, setHandleOpen] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(null);
-  const { isAuthenticated, getThemeColors } = useUserStore();
+  const { isAuthenticated, getThemeColors, jwt } = useUserStore();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = getThemeColors(colorScheme);
   const [backPressCount, setBackPressCount] = useState(0);
 
   useEffect(() => {
-    // Only fetch boards if authenticated
     if (isAuthenticated) {
-      fetchBoards();
+      fetchBoards(jwt);
     }
-    // Removed the else block to prevent automatic redirection
-    // This allows the login flow to work smoothly
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: "error",
+        text1: "An Error Occurred",
+        text2: error,
+      });
+    }
+  }, [error]);
 
   // Handle back button press only on boards tab
   useEffect(() => {
@@ -39,17 +64,17 @@ export default function BoardsScreen() {
         // If user can go back (not on the main tab), let default behavior happen
         return false;
       }
-      
+
       // User is on the main boards tab - implement double tap to exit
       if (backPressCount === 0) {
         setBackPressCount(1);
-        ToastAndroid.show('Press back again to exit', ToastAndroid.SHORT);
-        
+        ToastAndroid.show("Press back again to exit", ToastAndroid.SHORT);
+
         // Reset back press count after 2 seconds
         setTimeout(() => {
           setBackPressCount(0);
         }, 2000);
-        
+
         return true; // Prevent default back action
       } else {
         // Second back press - exit app
@@ -58,7 +83,10 @@ export default function BoardsScreen() {
       }
     };
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
 
     return () => backHandler.remove();
   }, [backPressCount, router]);
@@ -74,7 +102,7 @@ export default function BoardsScreen() {
       setEditModalVisible(false);
       setSelectedBoard(null);
       // Show success message
-      Alert.alert('Success', 'Board updated successfully!');
+      Alert.alert("Success", "Board updated successfully!");
     }
   };
 
@@ -89,8 +117,10 @@ export default function BoardsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
-        <Text style={[styles.title, { color: colors.textPrimary }]}>My Boards</Text>
-                  <View style={styles.headerActions}>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>
+          My Boards
+        </Text>
+        <View style={styles.headerActions}>
           <Pressable
             style={styles.createButton}
             onPress={() => {
@@ -113,10 +143,7 @@ export default function BoardsScreen() {
           data={boards}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <BoardCard 
-              board={item} 
-              onEdit={handleEditBoard}
-            />
+            <BoardCard board={item} onEdit={handleEditBoard} />
           )}
           contentContainerStyle={styles.listContent}
         />
@@ -126,7 +153,7 @@ export default function BoardsScreen() {
         visible={handleOpen}
         onClose={() => setHandleOpen(false)}
         onCreate={async (newBoard) => {
-          await createBoard(newBoard);
+          await createBoard(newBoard, jwt);
         }}
       />
 
